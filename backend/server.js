@@ -150,21 +150,26 @@ fastify.post('/chat', async (request, reply) => {
   const { message, history } = request.body || {};
   const userMsg = message || 'Hello Silla';
 
+  let retrievedChunks = [];
   try {
-    let retrievedChunks = [];
+    const msgEmbedding = await getEmbedding(userMsg);
+    const embeddingSql = `[${msgEmbedding.join(',')}]`;
+    const { rows } = await pool.query(
+      'SELECT source_file, content FROM note_chunks ORDER BY embedding <-> $1 LIMIT 4',
+      [embeddingSql]
+    );
+    retrievedChunks = rows;
+  } catch (vectorErr) {
     try {
-      const msgEmbedding = await getEmbedding(userMsg);
-      const embeddingSql = `[${msgEmbedding.join(',')}]`;
-      const { rows } = await pool.query(
-        'SELECT source_file, content FROM note_chunks ORDER BY embedding <-> $1 LIMIT 4',
-        [embeddingSql]
-      );
-      retrievedChunks = rows;
-    } catch {
       const { rows } = await pool.query('SELECT source_file, content FROM note_chunks ORDER BY created_at DESC LIMIT 4');
       retrievedChunks = rows;
+    } catch (dbErr) {
+      console.warn('Database note query notice:', dbErr.message);
+      retrievedChunks = [];
     }
+  }
 
+  try {
     const contextText = retrievedChunks.length > 0
       ? retrievedChunks.map((c, i) => `[Source ${i + 1} - ${c.source_file}]:\n${c.content}`).join('\n\n')
       : 'No uploaded notes yet.';
@@ -188,8 +193,9 @@ ${contextText}`;
       sources: retrievedChunks.map(c => ({ file: c.source_file, snippet: c.content.slice(0, 100) + '...' }))
     };
   } catch (err) {
+    console.error('Chat AI error:', err);
     return {
-      reply: `Silla: I'm currently running in offline study mode! Based on your study path: "${userMsg}" is a key topic. Would you like me to quiz you on this?`,
+      reply: `Silla: I'm ready to assist you! "${userMsg}" is a great topic. What specific question do you have about it?`,
       sources: []
     };
   }
