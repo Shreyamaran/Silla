@@ -129,6 +129,55 @@ fastify.post('/quiz/check', async (request, reply) => {
   };
 });
 
+fastify.post('/chat', async (request, reply) => {
+  const { message, history } = request.body || {};
+  const userMsg = message || 'Hello Silla';
+
+  try {
+    let retrievedChunks = [];
+    try {
+      const msgEmbedding = await getEmbedding(userMsg);
+      const embeddingSql = `[${msgEmbedding.join(',')}]`;
+      const { rows } = await pool.query(
+        'SELECT source_file, content FROM note_chunks ORDER BY embedding <-> $1 LIMIT 4',
+        [embeddingSql]
+      );
+      retrievedChunks = rows;
+    } catch {
+      const { rows } = await pool.query('SELECT source_file, content FROM note_chunks ORDER BY created_at DESC LIMIT 4');
+      retrievedChunks = rows;
+    }
+
+    const contextText = retrievedChunks.length > 0
+      ? retrievedChunks.map((c, i) => `[Source ${i + 1} - ${c.source_file}]:\n${c.content}`).join('\n\n')
+      : 'No uploaded notes yet.';
+
+    const systemPrompt = `You are Silla, a sovereign personal AI study orchestrator and tutor.
+Your job is to help the user master their material, answer questions accurately using their notes, and quiz them conversationally when requested.
+
+Context from user uploaded study materials:
+${contextText}`;
+
+    let fullPrompt = userMsg;
+    if (history && Array.isArray(history) && history.length > 0) {
+      const formattedHistory = history.slice(-4).map(h => `${h.role === 'user' ? 'User' : 'Silla'}: ${h.content}`).join('\n');
+      fullPrompt = `Recent conversation:\n${formattedHistory}\n\nUser: ${userMsg}`;
+    }
+
+    const replyText = await askGroq(fullPrompt, systemPrompt);
+
+    return {
+      reply: replyText,
+      sources: retrievedChunks.map(c => ({ file: c.source_file, snippet: c.content.slice(0, 100) + '...' }))
+    };
+  } catch (err) {
+    return {
+      reply: `Silla: I'm currently running in offline study mode! Based on your study path: "${userMsg}" is a key topic. Would you like me to quiz you on this?`,
+      sources: []
+    };
+  }
+});
+
 fastify.get('/db-check', async (request, reply) => {
   try {
     const result = await pool.query('SELECT NOW()');
