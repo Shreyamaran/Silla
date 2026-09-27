@@ -58,13 +58,21 @@ export default function App() {
   // Health Check
   useEffect(() => {
     checkHealth();
+    const interval = setInterval(checkHealth, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const checkHealth = async () => {
     try {
-      const res = await fetch(`${API_BASE}/health`);
-      if (res.ok) setServerHealth('online');
-      else setServerHealth('offline');
+      let res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) }).catch(() => null);
+      if (!res || !res.ok) {
+        res = await fetch('http://localhost:3001/health', { signal: AbortSignal.timeout(3000) }).catch(() => null);
+      }
+      if (res && res.ok) {
+        setServerHealth('online');
+      } else {
+        setServerHealth('offline');
+      }
     } catch {
       setServerHealth('offline');
     }
@@ -279,10 +287,24 @@ export default function App() {
         </nav>
 
         {/* Server Status Indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '20px' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: serverHealth === 'online' ? '#10b981' : '#f43f5e', boxShadow: serverHealth === 'online' ? '0 0 8px #10b981' : '0 0 8px #f43f5e' }} />
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>{serverHealth === 'online' ? 'Backend Ready' : 'Backend Connecting'}</span>
-          <RefreshCw size={12} style={{ cursor: 'pointer', opacity: 0.7 }} onClick={checkHealth} />
+        <div 
+          onClick={checkHealth}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            background: 'rgba(255,255,255,0.05)', 
+            padding: '6px 14px', 
+            borderRadius: '20px',
+            cursor: 'pointer',
+            border: '1px solid rgba(255,255,255,0.08)'
+          }}
+        >
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: serverHealth === 'online' ? '#10b981' : '#f59e0b', boxShadow: serverHealth === 'online' ? '0 0 8px #10b981' : '0 0 8px #f59e0b' }} />
+          <span style={{ fontSize: '12px', color: serverHealth === 'online' ? '#10b981' : 'var(--text-muted)', fontWeight: 600 }}>
+            {serverHealth === 'online' ? 'Backend Ready' : 'Connecting to Backend...'}
+          </span>
+          <RefreshCw size={12} className={serverHealth !== 'online' ? 'spin' : ''} style={{ opacity: 0.7 }} />
         </div>
       </header>
 
