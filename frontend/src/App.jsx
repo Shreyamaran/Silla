@@ -592,7 +592,7 @@ export default function App() {
                   const offsets = [0, 65, -35, 75, -20, -70, 40];
                   const xOffset = offsets[idx % offsets.length];
 
-                  const nodeSize = isCurrent ? 76 : 68;
+                  const nodeSize = 68; // Uniform size for the inner chunky circle
                   const nodeClass = isCompleted 
                     ? 'duo-node-base duo-node-completed' 
                     : isCurrent 
@@ -602,12 +602,12 @@ export default function App() {
                   // Lucide icon per node state & type
                   const renderNodeIcon = () => {
                     if (isCompleted) {
-                      return idx % 2 === 0 ? <Star size={28} color="#fff" fill="currentColor" /> : <BookOpen size={28} color="#fff" />;
+                      return idx % 2 === 0 ? <MessageSquare size={32} color="#fff" fill="currentColor" /> : <CheckCircle2 size={32} color="#fff" />;
                     }
                     if (isCurrent) {
-                      return <Trophy size={32} color="#fff" fill="currentColor" />;
+                      return <Star size={36} color="#fff" fill="currentColor" />;
                     }
-                    return <Lock size={24} color="#94a3b8" />;
+                    return <BookOpen size={28} color="#afafaf" />;
                   };
 
                   return (
@@ -622,31 +622,47 @@ export default function App() {
                         flexDirection: 'column',
                         alignItems: 'center',
                         gap: '8px',
-                        margin: '6px 0'
+                        margin: '10px 0'
                       }}
                     >
                       {/* Floating Speech Bubble Above Active Node */}
                       {isCurrent && (
-                        <div className="speech-bubble">
+                        <div className="duo-speech-bubble">
                           START
                         </div>
                       )}
 
-                      {/* Pulsing Outer Ring */}
-                      {isCurrent && <div className="pulse-ring-wrapper" />}
-
-                      {/* 3D Chunky Circular Node Button */}
-                      <div
-                        className={nodeClass}
-                        style={{
-                          width: nodeSize,
-                          height: nodeSize,
-                          outline: isSelected ? '3px solid #ffffff' : 'none',
-                          outlineOffset: '4px'
-                        }}
-                      >
-                        {renderNodeIcon()}
-                      </div>
+                      {/* Current Node needs outer ring container, others don't */}
+                      {isCurrent ? (
+                        <div className="duo-active-ring-container">
+                          <div className="duo-active-ring" />
+                          <div
+                            className={nodeClass}
+                            style={{
+                              width: nodeSize,
+                              height: nodeSize
+                            }}
+                          >
+                            {renderNodeIcon()}
+                          </div>
+                          <div className="duo-mini-stars">
+                            <Star size={14} color="#00cd9c" fill="currentColor" />
+                            <Star size={12} color="#e5e5e5" fill="currentColor" style={{ marginTop: '8px' }} />
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className={nodeClass}
+                          style={{
+                            width: nodeSize,
+                            height: nodeSize,
+                            outline: isSelected ? '4px solid rgba(255,255,255,0.4)' : 'none',
+                            outlineOffset: '6px'
+                          }}
+                        >
+                          {renderNodeIcon()}
+                        </div>
+                      )}
 
                       {/* Label Badge */}
                       <div style={{
