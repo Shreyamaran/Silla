@@ -58,6 +58,77 @@ Format: [{"id": 1, "topic": "Topic Name", "description": "Short overview", "dueD
   }
 });
 
+fastify.post('/quiz/generate', async (request, reply) => {
+  const { topic } = request.body || request.query || {};
+  const topicName = topic || 'General Concepts';
+
+  try {
+    let contextNotes = '';
+    try {
+      const topicEmbedding = await getEmbedding(topicName);
+      const embeddingSql = `[${topicEmbedding.join(',')}]`;
+      const { rows } = await pool.query(
+        'SELECT content FROM note_chunks ORDER BY embedding <-> $1 LIMIT 5',
+        [embeddingSql]
+      );
+      contextNotes = rows.map(r => r.content).join('\n\n');
+    } catch {
+      const { rows } = await pool.query('SELECT content FROM note_chunks ORDER BY created_at DESC LIMIT 5');
+      contextNotes = rows.map(r => r.content).join('\n\n');
+    }
+
+    const systemPrompt = `You are an expert quiz generator. Return ONLY a valid JSON object with a key "questions" containing an array of 3 multiple-choice questions grounded in the user's notes.
+Format:
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "Question text?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctAnswerIndex": 0,
+      "explanation": "Why option A is correct based on the notes."
+    }
+  ]
+}`;
+
+    const userPrompt = `Topic: ${topicName}\nNotes Context:\n${contextNotes || 'General study material.'}`;
+
+    const rawResponse = await askGroq(userPrompt, systemPrompt);
+    const cleaned = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+    const quizData = JSON.parse(cleaned);
+
+    return quizData;
+  } catch (err) {
+    return {
+      questions: [
+        {
+          id: 1,
+          question: `What is a primary principle of ${topicName}?`,
+          options: ['Core mechanism optimization', 'Random variance', 'Manual intervention', 'Static allocation'],
+          correctAnswerIndex: 0,
+          explanation: 'Core mechanism optimization provides targeted efficiency.'
+        },
+        {
+          id: 2,
+          question: `How does ${topicName} improve study retention?`,
+          options: ['By testing active recall', 'By passive reading', 'By skipping topics', 'By ignoring notes'],
+          correctAnswerIndex: 0,
+          explanation: 'Active recall strengthens long-term memory.'
+        }
+      ]
+    };
+  }
+});
+
+fastify.post('/quiz/check', async (request, reply) => {
+  const { userIndex, correctIndex } = request.body || {};
+  const isCorrect = Number(userIndex) === Number(correctIndex);
+  return {
+    isCorrect,
+    feedback: isCorrect ? 'Spot on! Correct answer.' : 'Not quite. Review the topic references and try again!'
+  };
+});
+
 fastify.get('/db-check', async (request, reply) => {
   try {
     const result = await pool.query('SELECT NOW()');
