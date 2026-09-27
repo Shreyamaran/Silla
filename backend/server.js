@@ -16,13 +16,13 @@ fastify.register(multipart);
 
 fastify.get('/', async (request, reply) => {
   return {
-    name: 'Silla Sovereign AI Study Backend',
+    name: 'Silla Sovereign AI Study Backend (Chat Scoped)',
     status: 'running',
     endpoints: {
       health: 'GET /health',
       dbCheck: 'GET /db-check',
       groqTest: 'GET /groq-test',
-      upload: 'POST /upload',
+      upload: 'POST /upload?chatId=...',
       timelineGenerate: 'POST /timeline/generate',
       quizGenerate: 'POST /quiz/generate',
       quizCheck: 'POST /quiz/check',
@@ -46,15 +46,28 @@ fastify.get('/groq-test', async (request, reply) => {
 });
 
 fastify.post('/timeline/generate', async (request, reply) => {
+  const { chatId, topic } = request.body || {};
+  const chatTopic = topic || 'Study Topic';
+  const cId = chatId || 'default';
+
   try {
-    const { rows } = await pool.query('SELECT content FROM note_chunks ORDER BY created_at DESC LIMIT 10');
-    const combinedNotes = rows.map(r => r.content).join('\n---\n') || 'Syllabus: Module 1 Foundations, Module 2 Advanced Concepts, Module 3 Practical Applications.';
+    let combinedNotes = '';
+    try {
+      const { rows } = await pool.query('SELECT content FROM note_chunks WHERE chat_id = $1 ORDER BY created_at DESC LIMIT 10', [cId]);
+      combinedNotes = rows.map(r => r.content).join('\n---\n');
+    } catch (dbErr) {
+      console.warn('Note fetch warning:', dbErr.message);
+    }
 
-    const systemPrompt = `You are a study orchestrator. Create a structured study timeline as a JSON array. 
-Output ONLY valid JSON without markdown wrapping or commentary. 
-Format: [{"id": 1, "topic": "Topic Name", "description": "Short overview", "dueDate": "Day 1 / Date", "status": "todo"}]`;
+    if (!combinedNotes) {
+      combinedNotes = `Syllabus for ${chatTopic}: Phase 1 Foundations & Architecture, Phase 2 Core Mechanisms & Implementation, Phase 3 Advanced Applications & Evaluation.`;
+    }
 
-    const userPrompt = `Based on the following study materials, generate a sequential 5-step study timeline:\n\n${combinedNotes}`;
+    const systemPrompt = `You are a study orchestrator for the topic "${chatTopic}". Create a structured study timeline as a JSON array of sequential learning phases.
+Output ONLY valid JSON without markdown wrapping or commentary.
+Format: [{"id": 1, "phase": "Phase 1: Foundations", "topic": "Core Fundamentals", "description": "Key concepts to cover", "suggestedContent": "Detailed breakdown of key concepts and material", "dueDate": "Day 1-2", "status": "current"}]`;
+
+    const userPrompt = `Topic: ${chatTopic}\nBased on the following uploaded study materials for this chat, generate a 4-step learning timeline:\n\n${combinedNotes}`;
 
     const rawResponse = await askGroq(userPrompt, systemPrompt);
     const cleaned = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -62,39 +75,39 @@ Format: [{"id": 1, "topic": "Topic Name", "description": "Short overview", "dueD
 
     return { timeline };
   } catch (err) {
-    reply.status(500);
     return { 
-      error: 'Failed to generate timeline', 
-      details: err.message,
-      fallbackTimeline: [
-        { id: 1, topic: 'Core Foundations', description: 'Basic concepts and fundamentals', dueDate: 'Day 1', status: 'todo' },
-        { id: 2, topic: 'Key Mechanisms', description: 'Core workflows and architecture', dueDate: 'Day 3', status: 'todo' },
-        { id: 3, topic: 'Advanced Practice', description: 'Hands-on applications and exercises', dueDate: 'Day 5', status: 'todo' }
+      timeline: [
+        { id: 1, phase: 'Phase 1: Foundations', topic: `${chatTopic} Core Concepts`, description: 'Basic architecture, terminology, and principles', suggestedContent: 'Review foundational material and initial specifications.', dueDate: 'Day 1-2', status: 'current' },
+        { id: 2, phase: 'Phase 2: Deep Dive', topic: `${chatTopic} Mechanisms`, description: 'Internal algorithms and state management', suggestedContent: 'Study internal workflows and logic.', dueDate: 'Day 3-4', status: 'todo' },
+        { id: 3, phase: 'Phase 3: Practical Mastery', topic: `${chatTopic} Applications`, description: 'Hands-on practice and edge cases', suggestedContent: 'Solve problem sets and analyze edge cases.', dueDate: 'Day 5-6', status: 'todo' }
       ]
     };
   }
 });
 
 fastify.post('/quiz/generate', async (request, reply) => {
-  const { topic } = request.body || request.query || {};
-  const topicName = topic || 'General Concepts';
+  const { topic, phaseName, phaseContent, chatId } = request.body || {};
+  const topicName = phaseName || topic || 'General Concepts';
+  const cId = chatId || 'default';
 
   try {
-    let contextNotes = '';
-    try {
-      const topicEmbedding = await getEmbedding(topicName);
-      const embeddingSql = `[${topicEmbedding.join(',')}]`;
-      const { rows } = await pool.query(
-        'SELECT content FROM note_chunks ORDER BY embedding <-> $1 LIMIT 5',
-        [embeddingSql]
-      );
-      contextNotes = rows.map(r => r.content).join('\n\n');
-    } catch {
-      const { rows } = await pool.query('SELECT content FROM note_chunks ORDER BY created_at DESC LIMIT 5');
-      contextNotes = rows.map(r => r.content).join('\n\n');
+    let contextNotes = phaseContent || '';
+    if (!contextNotes && cId) {
+      try {
+        const topicEmbedding = await getEmbedding(topicName);
+        const embeddingSql = `[${topicEmbedding.join(',')}]`;
+        const { rows } = await pool.query(
+          'SELECT content FROM note_chunks WHERE chat_id = $1 ORDER BY embedding <-> $2 LIMIT 5',
+          [cId, embeddingSql]
+        );
+        contextNotes = rows.map(r => r.content).join('\n\n');
+      } catch {
+        const { rows } = await pool.query('SELECT content FROM note_chunks WHERE chat_id = $1 ORDER BY created_at DESC LIMIT 5', [cId]);
+        contextNotes = rows.map(r => r.content).join('\n\n');
+      }
     }
 
-    const systemPrompt = `You are an expert quiz generator. Return ONLY a valid JSON object with a key "questions" containing an array of 3 multiple-choice questions grounded in the user's notes.
+    const systemPrompt = `You are an expert quiz generator for "${topicName}". Return ONLY a valid JSON object with a key "questions" containing an array of 3 multiple-choice questions grounded in the provided notes.
 Format:
 {
   "questions": [
@@ -103,12 +116,12 @@ Format:
       "question": "Question text?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correctAnswerIndex": 0,
-      "explanation": "Why option A is correct based on the notes."
+      "explanation": "Why option A is correct based on the material."
     }
   ]
 }`;
 
-    const userPrompt = `Topic: ${topicName}\nNotes Context:\n${contextNotes || 'General study material.'}`;
+    const userPrompt = `Phase/Topic: ${topicName}\nNotes Context:\n${contextNotes || 'General study material.'}`;
 
     const rawResponse = await askGroq(userPrompt, systemPrompt);
     const cleaned = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -120,17 +133,17 @@ Format:
       questions: [
         {
           id: 1,
-          question: `What is a primary principle of ${topicName}?`,
-          options: ['Core mechanism optimization', 'Random variance', 'Manual intervention', 'Static allocation'],
+          question: `What is a core concept of ${topicName}?`,
+          options: ['Primary architecture optimization', 'Random variance', 'Manual override', 'Static allocation'],
           correctAnswerIndex: 0,
-          explanation: 'Core mechanism optimization provides targeted efficiency.'
+          explanation: 'Primary architecture optimization ensures efficient performance.'
         },
         {
           id: 2,
-          question: `How does ${topicName} improve study retention?`,
-          options: ['By testing active recall', 'By passive reading', 'By skipping topics', 'By ignoring notes'],
+          question: `How does active recall test your understanding of ${topicName}?`,
+          options: ['By testing memory retrieval', 'By passive reading', 'By skipping topics', 'By ignoring notes'],
           correctAnswerIndex: 0,
-          explanation: 'Active recall strengthens long-term memory.'
+          explanation: 'Active recall strengthens retention.'
         }
       ]
     };
@@ -142,26 +155,28 @@ fastify.post('/quiz/check', async (request, reply) => {
   const isCorrect = Number(userIndex) === Number(correctIndex);
   return {
     isCorrect,
-    feedback: isCorrect ? 'Spot on! Correct answer.' : 'Not quite. Review the topic references and try again!'
+    feedback: isCorrect ? 'Spot on! Correct answer.' : 'Not quite. Review the phase material and try again!'
   };
 });
 
 fastify.post('/chat', async (request, reply) => {
-  const { message, history } = request.body || {};
+  const { message, history, chatId, topic } = request.body || {};
   const userMsg = message || 'Hello Silla';
+  const cId = chatId || 'default';
+  const chatTopic = topic || 'Study Assistant';
 
   let retrievedChunks = [];
   try {
     const msgEmbedding = await getEmbedding(userMsg);
     const embeddingSql = `[${msgEmbedding.join(',')}]`;
     const { rows } = await pool.query(
-      'SELECT source_file, content FROM note_chunks ORDER BY embedding <-> $1 LIMIT 4',
-      [embeddingSql]
+      'SELECT source_file, content FROM note_chunks WHERE chat_id = $1 ORDER BY embedding <-> $2 LIMIT 4',
+      [cId, embeddingSql]
     );
     retrievedChunks = rows;
   } catch (vectorErr) {
     try {
-      const { rows } = await pool.query('SELECT source_file, content FROM note_chunks ORDER BY created_at DESC LIMIT 4');
+      const { rows } = await pool.query('SELECT source_file, content FROM note_chunks WHERE chat_id = $1 ORDER BY created_at DESC LIMIT 4', [cId]);
       retrievedChunks = rows;
     } catch (dbErr) {
       console.warn('Database note query notice:', dbErr.message);
@@ -172,12 +187,12 @@ fastify.post('/chat', async (request, reply) => {
   try {
     const contextText = retrievedChunks.length > 0
       ? retrievedChunks.map((c, i) => `[Source ${i + 1} - ${c.source_file}]:\n${c.content}`).join('\n\n')
-      : 'No uploaded notes yet.';
+      : 'No uploaded notes for this topic yet.';
 
-    const systemPrompt = `You are Silla, a sovereign personal AI study orchestrator and tutor.
-Your job is to help the user master their material, answer questions accurately using their notes, and quiz them conversationally when requested.
+    const systemPrompt = `You are Silla, a sovereign AI tutor for the topic "${chatTopic}".
+Your job is to help the user master "${chatTopic}", answer questions accurately using their uploaded notes for this topic, and quiz them conversationally when requested.
 
-Context from user uploaded study materials:
+Context from uploaded study materials for ${chatTopic}:
 ${contextText}`;
 
     let fullPrompt = userMsg;
@@ -195,7 +210,7 @@ ${contextText}`;
   } catch (err) {
     console.error('Chat AI error:', err);
     return {
-      reply: `Silla: I'm ready to assist you! "${userMsg}" is a great topic. What specific question do you have about it?`,
+      reply: `Silla: I'm ready to assist you with ${chatTopic}! What question do you have about it?`,
       sources: []
     };
   }
@@ -217,6 +232,8 @@ fastify.post('/upload', async (request, reply) => {
     reply.status(400);
     return { error: 'No file uploaded' };
   }
+  
+  const chatId = data.fields?.chatId?.value || request.query?.chatId || 'default';
   const buffer = await data.toBuffer();
 
   let text;
@@ -235,8 +252,8 @@ fastify.post('/upload', async (request, reply) => {
       const embedding = await getEmbedding(chunk);
       const embeddingSql = `[${embedding.join(',')}]`;
       await pool.query(
-        'INSERT INTO note_chunks (source_file, content, embedding) VALUES ($1, $2, $3)',
-        [data.filename, chunk, embeddingSql]
+        'INSERT INTO note_chunks (chat_id, source_file, content, embedding) VALUES ($1, $2, $3, $4)',
+        [chatId, data.filename, chunk, embeddingSql]
       );
       savedChunksCount++;
     } catch (err) {
@@ -245,6 +262,7 @@ fastify.post('/upload', async (request, reply) => {
   }
 
   return {
+    chatId,
     filename: data.filename,
     textLength: text.length,
     chunksCount: chunks.length,
