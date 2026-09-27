@@ -14,11 +14,13 @@ export async function initDb() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS note_chunks (
         id SERIAL PRIMARY KEY,
+        chat_id TEXT,
         source_file TEXT NOT NULL,
         content TEXT NOT NULL,
         embedding vector(384),
         created_at TIMESTAMP DEFAULT now()
       );
+      ALTER TABLE note_chunks ADD COLUMN IF NOT EXISTS chat_id TEXT;
     `);
     console.log('Database & note_chunks table initialized.');
   } catch (err) {
