@@ -20,12 +20,15 @@ import {
   Trophy,
   UploadCloud, 
   X, 
-  Zap 
+  Zap,
+  ArrowLeft
 } from 'lucide-react';
+import LandingPage from './components/LandingPage';
 
 const API_BASE = 'http://127.0.0.1:3001';
 
 export default function App() {
+  const [view, setView] = useState('landing'); // 'landing' or 'app'
   const [serverHealth, setServerHealth] = useState('checking');
 
   // Multi-Chat Scoped Data Model
@@ -340,19 +343,56 @@ export default function App() {
     }
   };
 
+  // Render Landing Page as initial view
+  if (view === 'landing') {
+    return (
+      <LandingPage 
+        onStartLearning={(targetTab) => {
+          if (targetTab === 'timeline' || targetTab === 'quiz') setViewMode('timeline');
+          else if (targetTab === 'chat' || targetTab === 'resources') setViewMode('chat');
+          setView('app');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }} 
+      />
+    );
+  }
+
+  // Render Multi-Chat Silla Application Workspace
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: 'var(--bg-dark)' }}>
       
       {/* 1. SIDEBAR: Topic Chats List */}
-      <aside className="glass-panel" style={{ width: '280px', margin: '12px 0 12px 12px', display: 'flex', flexDirection: 'column', gap: '16px', padding: '20px 16px', zIndex: 10 }}>
+      <aside className="glass-panel" style={{ width: '290px', margin: '12px 0 12px 12px', display: 'flex', flexDirection: 'column', gap: '16px', padding: '20px 16px', zIndex: 10, borderColor: 'rgba(185, 144, 153, 0.2)' }}>
+        
+        {/* Return to Landing Page Button */}
+        <button 
+          onClick={() => setView('landing')}
+          style={{ 
+            background: 'rgba(185, 144, 153, 0.12)', 
+            border: '1px solid rgba(185, 144, 153, 0.25)', 
+            color: 'var(--color-platinum)', 
+            padding: '8px 14px', 
+            borderRadius: '8px', 
+            fontSize: '12px', 
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <ArrowLeft size={15} /> Landing Page
+        </button>
+
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, #6366f1, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Sparkles size={20} color="#fff" />
+          <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, var(--color-puce), var(--color-wenge))', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(232,221,221,0.2)' }}>
+            <Sparkles size={20} color="var(--color-platinum)" />
           </div>
           <div>
-            <h1 style={{ fontSize: '18px', fontWeight: 800 }}>Silla</h1>
-            <p style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 600 }}>TOPIC CHATS & TIMELINES</p>
+            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, color: 'var(--color-platinum)' }}>Silla</h1>
+            <p style={{ fontSize: '10px', color: 'var(--color-rosy)', fontWeight: 600, letterSpacing: '0.8px' }}>TOPIC CHATS & TIMELINES</p>
           </div>
         </div>
 
@@ -367,7 +407,7 @@ export default function App() {
 
         {/* Chats List */}
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', paddingLeft: '4px' }}>Active Study Topics</span>
+          <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700, textTransform: 'uppercase', paddingLeft: '4px' }}>Active Study Topics</span>
           
           {chats.map(chat => {
             const isActive = chat.id === activeChatId;
@@ -382,20 +422,20 @@ export default function App() {
                   padding: '12px 14px',
                   borderRadius: '12px',
                   cursor: 'pointer',
-                  background: isActive ? 'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(6,182,212,0.15))' : 'rgba(255,255,255,0.03)',
-                  border: isActive ? '1px solid var(--accent-primary)' : '1px solid rgba(255,255,255,0.06)',
+                  background: isActive ? 'rgba(118, 46, 63, 0.25)' : 'rgba(38, 26, 29, 0.4)',
+                  border: isActive ? '1px solid var(--color-puce)' : '1px solid rgba(185, 144, 153, 0.15)',
                   transition: 'all 0.2s ease',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px'
                 }}
               >
-                <MessageSquare size={16} color={isActive ? 'var(--accent-cyan)' : 'var(--text-muted)'} />
+                <MessageSquare size={16} color={isActive ? 'var(--color-platinum)' : 'var(--color-rosy)'} />
                 <div style={{ flex: 1, overflow: 'hidden' }}>
-                  <h4 style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? '#fff' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <h4 style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? '#fff' : 'var(--color-platinum)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {chat.topic}
                   </h4>
-                  <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '10px', color: 'var(--color-rosy)' }}>
                     {chat.files.length} notes attached
                   </span>
                 </div>
@@ -412,15 +452,15 @@ export default function App() {
             display: 'flex', 
             alignItems: 'center', 
             gap: '8px', 
-            background: 'rgba(255,255,255,0.04)', 
+            background: 'rgba(185,144,153,0.08)', 
             padding: '8px 12px', 
             borderRadius: '12px',
             cursor: 'pointer',
-            border: '1px solid rgba(255,255,255,0.06)'
+            border: '1px solid rgba(185,144,153,0.18)'
           }}
         >
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: serverHealth === 'online' ? '#10b981' : '#f59e0b' }} />
-          <span style={{ fontSize: '11px', color: serverHealth === 'online' ? '#10b981' : 'var(--text-muted)', fontWeight: 600 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: serverHealth === 'online' ? '#5A8F76' : '#C69A7B', boxShadow: serverHealth === 'online' ? '0 0 8px #5A8F76' : '0 0 8px #C69A7B' }} />
+          <span style={{ fontSize: '11px', color: serverHealth === 'online' ? '#5A8F76' : 'var(--color-rosy)', fontWeight: 600 }}>
             {serverHealth === 'online' ? 'Backend Ready' : 'Connecting...'}
           </span>
           <RefreshCw size={12} className={serverHealth !== 'online' ? 'spin' : ''} style={{ opacity: 0.6, marginLeft: 'auto' }} />
@@ -431,19 +471,19 @@ export default function App() {
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', margin: '12px', overflow: 'hidden' }}>
         
         {/* Main Header with View Switcher */}
-        <header className="glass-panel" style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+        <header className="glass-panel" style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', borderColor: 'rgba(185, 144, 153, 0.2)' }}>
           <div>
-            <span style={{ fontSize: '11px', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>SELECTED STUDY TOPIC</span>
-            <h2 style={{ fontSize: '18px', fontWeight: 800 }}>{activeChat.topic}</h2>
+            <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700, textTransform: 'uppercase' }}>SELECTED STUDY TOPIC</span>
+            <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, color: 'var(--color-platinum)' }}>{activeChat.topic}</h2>
           </div>
 
           {/* View Switcher: Chat vs Timeline */}
-          <div style={{ display: 'flex', gap: '8px', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '12px' }}>
+          <div style={{ display: 'flex', gap: '8px', background: 'rgba(18, 12, 14, 0.6)', padding: '4px', borderRadius: '12px', border: '1px solid rgba(185, 144, 153, 0.15)' }}>
             <button
               onClick={() => setViewMode('chat')}
               style={{
-                background: viewMode === 'chat' ? 'var(--accent-primary)' : 'transparent',
-                color: viewMode === 'chat' ? '#fff' : 'var(--text-muted)',
+                background: viewMode === 'chat' ? 'var(--color-puce)' : 'transparent',
+                color: viewMode === 'chat' ? '#fff' : 'var(--color-rosy)',
                 border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
               }}
             >
@@ -452,8 +492,8 @@ export default function App() {
             <button
               onClick={() => setViewMode('timeline')}
               style={{
-                background: viewMode === 'timeline' ? 'var(--accent-primary)' : 'transparent',
-                color: viewMode === 'timeline' ? '#fff' : 'var(--text-muted)',
+                background: viewMode === 'timeline' ? 'var(--color-puce)' : 'transparent',
+                color: viewMode === 'timeline' ? '#fff' : 'var(--color-rosy)',
                 border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
               }}
             >
@@ -464,21 +504,21 @@ export default function App() {
 
         {/* SCREEN A: CHAT VIEW FOR SELECTED CHAT */}
         {viewMode === 'chat' && (
-          <div className="glass-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div className="glass-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderColor: 'rgba(185, 144, 153, 0.2)' }}>
             
             {/* Scoped Files Bar */}
-            <div style={{ padding: '12px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: '12px 24px', borderBottom: '1px solid rgba(185, 144, 153, 0.15)', background: 'rgba(18, 12, 14, 0.6)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Layers size={16} color="var(--accent-cyan)" />
-                <span style={{ fontSize: '12px', fontWeight: 600 }}>Attached Notes Context:</span>
+                <Layers size={16} color="var(--color-rosy)" />
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-platinum)' }}>Attached Notes Context:</span>
                 {activeChat.files.length > 0 ? (
                   activeChat.files.map((f, fIdx) => (
-                    <span key={fIdx} style={{ background: 'rgba(99,102,241,0.15)', color: 'var(--accent-cyan)', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', border: '1px solid rgba(99,102,241,0.3)' }}>
+                    <span key={fIdx} style={{ background: 'rgba(118, 46, 63, 0.2)', color: 'var(--color-platinum)', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', border: '1px solid rgba(185, 144, 153, 0.3)' }}>
                       📄 {f.name}
                     </span>
                   ))
                 ) : (
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>No notes uploaded yet for this topic</span>
+                  <span style={{ fontSize: '11px', color: 'var(--color-rosy)' }}>No notes uploaded yet for this topic</span>
                 )}
               </div>
 
@@ -491,7 +531,7 @@ export default function App() {
 
             {/* Upload Notification Alert */}
             {uploadStatus && (
-              <div style={{ padding: '8px 24px', background: uploadStatus.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)', color: uploadStatus.type === 'success' ? '#10b981' : '#f43f5e', fontSize: '12px', fontWeight: 600 }}>
+              <div style={{ padding: '8px 24px', background: uploadStatus.type === 'success' ? 'rgba(90, 143, 118, 0.2)' : 'rgba(118, 46, 63, 0.2)', color: uploadStatus.type === 'success' ? '#5A8F76' : 'var(--color-platinum)', fontSize: '12px', fontWeight: 600 }}>
                 {uploadStatus.message}
               </div>
             )}
@@ -506,18 +546,18 @@ export default function App() {
                     borderRadius: '16px',
                     fontSize: '14px',
                     lineHeight: '1.5',
-                    background: msg.role === 'user' ? 'linear-gradient(135deg, var(--accent-primary), var(--accent-cyan))' : 'rgba(30, 41, 59, 0.85)',
+                    background: msg.role === 'user' ? 'linear-gradient(135deg, var(--color-puce), var(--color-liver))' : 'rgba(38, 26, 29, 0.85)',
                     color: '#fff',
-                    border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)'
+                    border: msg.role === 'user' ? 'none' : '1px solid rgba(185,144,153,0.2)'
                   }}>
                     {msg.content}
                   </div>
 
                   {msg.sources && msg.sources.length > 0 && (
-                    <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       <span>Sources:</span>
                       {msg.sources.map((s, sIdx) => (
-                        <span key={sIdx} style={{ background: 'rgba(255,255,255,0.06)', padding: '2px 6px', borderRadius: '4px' }}>📄 {s.file}</span>
+                        <span key={sIdx} style={{ background: 'rgba(185,144,153,0.15)', padding: '2px 6px', borderRadius: '4px' }}>📄 {s.file}</span>
                       ))}
                     </div>
                   )}
@@ -526,7 +566,7 @@ export default function App() {
             </div>
 
             {/* Chat Input */}
-            <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '12px' }}>
+            <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(185, 144, 153, 0.15)', display: 'flex', gap: '12px' }}>
               <input
                 type="text"
                 placeholder={`Ask Silla a question about ${activeChat.topic}...`}
@@ -535,8 +575,8 @@ export default function App() {
                 onKeyDown={e => e.key === 'Enter' && handleSendChat()}
                 style={{
                   flex: 1,
-                  background: 'rgba(15, 23, 42, 0.8)',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  background: 'rgba(18, 12, 14, 0.8)',
+                  border: '1px solid rgba(185, 144, 153, 0.25)',
                   padding: '12px 18px',
                   borderRadius: '12px',
                   color: '#fff',
@@ -556,11 +596,11 @@ export default function App() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '16px', flex: 1, overflow: 'hidden' }}>
             
             {/* Timeline Phases View */}
-            <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }}>
+            <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto', borderColor: 'rgba(185, 144, 153, 0.2)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h3 style={{ fontSize: '20px', fontWeight: 800 }}>{activeChat.topic} — Study Timeline</h3>
-                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>Sequenced learning phases generated from material uploaded to this topic chat.</p>
+                  <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>{activeChat.topic} — Study Timeline</h3>
+                  <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '2px' }}>Sequenced learning phases generated from material uploaded to this topic chat.</p>
                 </div>
                 <button className="btn-secondary" onClick={() => regenerateTimelineForChat(activeChat.id, activeChat.topic)} disabled={isGeneratingTimeline}>
                   <RefreshCw size={14} className={isGeneratingTimeline ? 'spin' : ''} />
@@ -577,7 +617,7 @@ export default function App() {
                   top: 40,
                   bottom: 40,
                   width: 4,
-                  background: 'linear-gradient(to bottom, #10b981, #6366f1, #06b6d4, rgba(255,255,255,0.12))',
+                  background: 'linear-gradient(to bottom, #5A8F76, var(--color-puce), rgba(185,144,153,0.2))',
                   borderRadius: 2,
                   zIndex: 1
                 }} />
@@ -592,7 +632,7 @@ export default function App() {
                   const offsets = [0, 65, -35, 75, -20, -70, 40];
                   const xOffset = offsets[idx % offsets.length];
 
-                  const nodeSize = 68; // Uniform size for the inner chunky circle
+                  const nodeSize = isCurrent ? 76 : 68;
                   const nodeClass = isCompleted 
                     ? 'duo-node-base duo-node-completed' 
                     : isCurrent 
@@ -602,12 +642,12 @@ export default function App() {
                   // Lucide icon per node state & type
                   const renderNodeIcon = () => {
                     if (isCompleted) {
-                      return idx % 2 === 0 ? <MessageSquare size={32} color="#fff" fill="currentColor" /> : <CheckCircle2 size={32} color="#fff" />;
+                      return idx % 2 === 0 ? <Star size={28} color="#fff" fill="currentColor" /> : <BookOpen size={28} color="#fff" />;
                     }
                     if (isCurrent) {
-                      return <Star size={36} color="#fff" fill="currentColor" />;
+                      return <Trophy size={32} color="#fff" fill="currentColor" />;
                     }
-                    return <BookOpen size={28} color="#afafaf" />;
+                    return <Lock size={24} color="var(--color-rosy)" />;
                   };
 
                   return (
@@ -622,59 +662,43 @@ export default function App() {
                         flexDirection: 'column',
                         alignItems: 'center',
                         gap: '8px',
-                        margin: '10px 0'
+                        margin: '6px 0'
                       }}
                     >
                       {/* Floating Speech Bubble Above Active Node */}
                       {isCurrent && (
-                        <div className="duo-speech-bubble">
+                        <div className="speech-bubble" style={{ background: 'var(--color-puce)' }}>
                           START
                         </div>
                       )}
 
-                      {/* Current Node needs outer ring container, others don't */}
-                      {isCurrent ? (
-                        <div className="duo-active-ring-container">
-                          <div className="duo-active-ring" />
-                          <div
-                            className={nodeClass}
-                            style={{
-                              width: nodeSize,
-                              height: nodeSize
-                            }}
-                          >
-                            {renderNodeIcon()}
-                          </div>
-                          <div className="duo-mini-stars">
-                            <Star size={14} color="#00cd9c" fill="currentColor" />
-                            <Star size={12} color="#e5e5e5" fill="currentColor" style={{ marginTop: '8px' }} />
-                          </div>
-                        </div>
-                      ) : (
-                        <div
-                          className={nodeClass}
-                          style={{
-                            width: nodeSize,
-                            height: nodeSize,
-                            outline: isSelected ? '4px solid rgba(255,255,255,0.4)' : 'none',
-                            outlineOffset: '6px'
-                          }}
-                        >
-                          {renderNodeIcon()}
-                        </div>
-                      )}
+                      {/* Pulsing Outer Ring */}
+                      {isCurrent && <div className="pulse-ring-wrapper" style={{ borderColor: 'var(--color-rosy)' }} />}
+
+                      {/* 3D Chunky Circular Node Button */}
+                      <div
+                        className={nodeClass}
+                        style={{
+                          width: nodeSize,
+                          height: nodeSize,
+                          outline: isSelected ? '3px solid #ffffff' : 'none',
+                          outlineOffset: '4px'
+                        }}
+                      >
+                        {renderNodeIcon()}
+                      </div>
 
                       {/* Label Badge */}
                       <div style={{
                         textAlign: 'center',
-                        background: isSelected ? 'rgba(99,102,241,0.35)' : 'rgba(15, 23, 42, 0.95)',
+                        background: isSelected ? 'rgba(118, 46, 63, 0.4)' : 'rgba(18, 12, 14, 0.95)',
                         padding: '6px 14px',
                         borderRadius: '12px',
-                        border: isSelected ? '1px solid var(--accent-cyan)' : '1px solid rgba(255,255,255,0.1)',
+                        border: isSelected ? '1px solid var(--color-puce)' : '1px solid rgba(185, 144, 153, 0.2)',
                         maxWidth: '210px',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
                       }}>
-                        <span style={{ fontSize: '10px', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>
+                        <span style={{ fontSize: '10px', color: 'var(--color-rosy)', fontWeight: 700, textTransform: 'uppercase' }}>
                           {item.phase || `Phase ${idx + 1}`}
                         </span>
                         <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -688,7 +712,7 @@ export default function App() {
             </div>
 
             {/* Sidebar Phase Focus & Quiz Trigger */}
-            <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }}>
+            <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto', borderColor: 'rgba(185, 144, 153, 0.2)' }}>
               {(() => {
                 const phaseToDisplay = selectedPhase || activeChat.timeline[0];
                 if (!phaseToDisplay) return null;
@@ -696,13 +720,13 @@ export default function App() {
                 return (
                   <>
                     <div>
-                      <span style={{ fontSize: '11px', color: 'var(--accent-primary)', fontWeight: 700 }}>SELECTED PHASE CONTENT</span>
-                      <h3 style={{ fontSize: '18px', fontWeight: 800, marginTop: '4px' }}>{phaseToDisplay.phase || phaseToDisplay.topic}</h3>
+                      <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700 }}>SELECTED PHASE CONTENT</span>
+                      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, marginTop: '4px', color: 'var(--color-platinum)' }}>{phaseToDisplay.phase || phaseToDisplay.topic}</h3>
                     </div>
 
-                    <div style={{ background: 'rgba(99,102,241,0.08)', padding: '16px', borderRadius: '12px', borderLeft: '4px solid var(--accent-primary)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ background: 'rgba(118, 46, 63, 0.15)', padding: '16px', borderRadius: '12px', borderLeft: '4px solid var(--color-puce)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#fff' }}>Suggested Material to Cover</h4>
-                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                      <p style={{ fontSize: '13px', color: 'var(--color-platinum)', opacity: 0.85, lineHeight: '1.5' }}>
                         {phaseToDisplay.suggestedContent || phaseToDisplay.description}
                       </p>
                     </div>
@@ -725,15 +749,15 @@ export default function App() {
 
       {/* MODAL 1: NEW CHAT (NEW TOPIC) MODAL */}
       {newChatModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <form onSubmit={handleCreateNewChat} className="glass-panel" style={{ width: '90%', maxWidth: '420px', padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative' }}>
-            <button type="button" onClick={() => setNewChatModalOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+          <form onSubmit={handleCreateNewChat} className="glass-panel" style={{ width: '90%', maxWidth: '420px', padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', background: 'rgba(26, 17, 20, 0.95)', borderColor: 'rgba(185, 144, 153, 0.3)' }}>
+            <button type="button" onClick={() => setNewChatModalOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'var(--color-rosy)', cursor: 'pointer' }}>
               <X size={20} />
             </button>
 
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800 }}>Create New Topic Chat</h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Enter the name of the subject or course topic (e.g. Operating Systems, DBMS, Networks).</p>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>Create New Topic Chat</h3>
+              <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '4px' }}>Enter the name of the subject or course topic (e.g. Operating Systems, DBMS, Networks).</p>
             </div>
 
             <input
@@ -744,8 +768,8 @@ export default function App() {
               autoFocus
               style={{
                 width: '100%',
-                background: 'rgba(15, 23, 42, 0.9)',
-                border: '1px solid rgba(255,255,255,0.15)',
+                background: 'rgba(18, 12, 14, 0.9)',
+                border: '1px solid rgba(185, 144, 153, 0.25)',
                 padding: '12px 16px',
                 borderRadius: '12px',
                 color: '#fff',
@@ -763,26 +787,26 @@ export default function App() {
 
       {/* MODAL 2: PHASE QUIZ MODAL */}
       {quizModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="glass-panel" style={{ width: '90%', maxWidth: '540px', padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative' }}>
-            <button onClick={() => setQuizModalOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+          <div className="glass-panel" style={{ width: '90%', maxWidth: '540px', padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', background: 'rgba(26, 17, 20, 0.95)', borderColor: 'rgba(185,144,153,0.3)' }}>
+            <button onClick={() => setQuizModalOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'var(--color-rosy)', cursor: 'pointer' }}>
               <X size={20} />
             </button>
 
             {isGeneratingQuiz ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <Sparkles size={36} color="var(--accent-primary)" className="float-anim" />
-                <h3 style={{ marginTop: '16px', fontSize: '18px' }}>Generating Phase Quiz Questions...</h3>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Using Groq LLM grounded in material for {activeQuizPhaseName}</p>
+                <Sparkles size={36} color="var(--color-rosy)" className="float-anim" />
+                <h3 style={{ marginTop: '16px', fontSize: '18px', color: 'var(--color-platinum)', fontFamily: 'var(--font-serif)' }}>Generating Phase Quiz Questions...</h3>
+                <p style={{ fontSize: '12px', color: 'var(--color-rosy)' }}>Using local AI model grounded in material for {activeQuizPhaseName}</p>
               </div>
             ) : quizQuestions.length > 0 ? (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--accent-cyan)', fontWeight: 700 }}>{activeQuizPhaseName.toUpperCase()} — Q{currentQuestionIdx + 1}/{quizQuestions.length}</span>
-                  <span style={{ fontSize: '12px', color: 'var(--accent-emerald)', fontWeight: 700 }}>Score: {quizScore}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--color-rosy)', fontWeight: 700 }}>{activeQuizPhaseName.toUpperCase()} — Q{currentQuestionIdx + 1}/{quizQuestions.length}</span>
+                  <span style={{ fontSize: '12px', color: '#5A8F76', fontWeight: 700 }}>Score: {quizScore}</span>
                 </div>
 
-                <h3 style={{ fontSize: '16px', fontWeight: 600, lineHeight: '1.5', marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-platinum)', lineHeight: '1.5', marginBottom: '20px' }}>
                   {quizQuestions[currentQuestionIdx].question}
                 </h3>
 
@@ -795,12 +819,12 @@ export default function App() {
                       style={{
                         padding: '14px 18px',
                         borderRadius: '12px',
-                        background: selectedOption === idx
-                          ? (idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? 'rgba(16, 185, 129, 0.2)' : 'rgba(244, 63, 94, 0.2)')
+                        background: selectedOption === idx 
+                          ? (idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? 'rgba(90, 143, 118, 0.25)' : 'rgba(118, 46, 63, 0.25)')
                           : 'rgba(255,255,255,0.04)',
                         border: selectedOption === idx
-                          ? `1px solid ${idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? '#10b981' : '#f43f5e'}`
-                          : '1px solid rgba(255,255,255,0.08)',
+                          ? `1px solid ${idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? '#5A8F76' : 'var(--color-puce)'}`
+                          : '1px solid rgba(185,144,153,0.15)',
                         color: '#fff',
                         textAlign: 'left',
                         cursor: selectedOption === null ? 'pointer' : 'default',
@@ -815,9 +839,9 @@ export default function App() {
                 </div>
 
                 {quizResult && (
-                  <div style={{ marginTop: '20px', padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', fontSize: '13px' }}>
-                    <p style={{ fontWeight: 600, color: quizResult.isCorrect ? '#10b981' : '#f43f5e' }}>{quizResult.feedback}</p>
-                    <p style={{ color: 'var(--text-muted)', marginTop: '4px' }}>{quizQuestions[currentQuestionIdx].explanation}</p>
+                  <div style={{ marginTop: '20px', padding: '14px', borderRadius: '12px', background: 'rgba(185,144,153,0.1)', fontSize: '13px' }}>
+                    <p style={{ fontWeight: 600, color: quizResult.isCorrect ? '#5A8F76' : 'var(--color-rosy)' }}>{quizResult.feedback}</p>
+                    <p style={{ color: 'var(--color-platinum)', opacity: 0.8, marginTop: '4px' }}>{quizQuestions[currentQuestionIdx].explanation}</p>
 
                     <button className="btn-primary" onClick={handleNextQuestion} style={{ marginTop: '14px', width: '100%', justifyContent: 'center' }}>
                       {currentQuestionIdx < quizQuestions.length - 1 ? 'Next Question' : 'Finish Phase Quiz'} <ChevronRight size={16} />
