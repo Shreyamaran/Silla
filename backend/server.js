@@ -14,6 +14,23 @@ const fastify = Fastify({ logger: true });
 fastify.register(cors, { origin: true });
 fastify.register(multipart);
 
+fastify.get('/', async (request, reply) => {
+  return {
+    name: 'Silla Sovereign AI Study Backend',
+    status: 'running',
+    endpoints: {
+      health: 'GET /health',
+      dbCheck: 'GET /db-check',
+      groqTest: 'GET /groq-test',
+      upload: 'POST /upload',
+      timelineGenerate: 'POST /timeline/generate',
+      quizGenerate: 'POST /quiz/generate',
+      quizCheck: 'POST /quiz/check',
+      chat: 'POST /chat'
+    }
+  };
+});
+
 fastify.get('/health', async (request, reply) => {
   return { status: 'ok' };
 });
