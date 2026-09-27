@@ -565,37 +565,102 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Phases List */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '10px' }}>
+              {/* Duolingo Winding Path of Circular Nodes */}
+              <div style={{ position: 'relative', margin: '30px 0', padding: '20px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '52px' }}>
+                
+                {/* Connecting Line */}
+                <div style={{
+                  position: 'absolute',
+                  top: 40,
+                  bottom: 40,
+                  width: 4,
+                  background: 'linear-gradient(to bottom, #10b981, #6366f1, #06b6d4, rgba(255,255,255,0.12))',
+                  borderRadius: 2,
+                  zIndex: 1
+                }} />
+
                 {activeChat.timeline.map((item, idx) => {
+                  const status = item.status || (idx === 0 ? 'completed' : idx === 1 ? 'current' : 'locked');
+                  const isCompleted = status === 'completed';
+                  const isCurrent = status === 'current';
                   const isSelected = selectedPhase?.id === item.id || (selectedPhase === null && idx === 0);
+
+                  // Zig-zag offsets: left (-55), center (0), right (+55)...
+                  const offsets = [0, 55, 0, -55, 0, 45, -45];
+                  const xOffset = offsets[idx % offsets.length];
+
+                  const nodeSize = isCurrent ? 76 : 68;
+
                   return (
                     <div
                       key={item.id || idx}
                       onClick={() => setSelectedPhase(item)}
                       style={{
-                        padding: '18px 20px',
-                        borderRadius: '14px',
+                        position: 'relative',
+                        zIndex: 2,
+                        transform: `translateX(${xOffset}px)`,
                         cursor: 'pointer',
-                        background: isSelected ? 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(6,182,212,0.1))' : 'rgba(255,255,255,0.03)',
-                        border: isSelected ? '1px solid var(--accent-cyan)' : '1px solid rgba(255,255,255,0.08)',
-                        transition: 'all 0.2s ease',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '8px'
+                        alignItems: 'center',
+                        gap: '8px',
+                        transition: 'transform 0.3s ease'
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>
-                          {item.phase || `Phase ${idx + 1}`}
-                        </span>
-                        <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: '10px', color: 'var(--text-muted)' }}>
-                          {item.dueDate || `Phase ${idx + 1}`}
-                        </span>
+                      {/* Circular Landing Spot Node */}
+                      <div
+                        className={isCurrent ? 'pulse-node' : ''}
+                        style={{
+                          width: nodeSize,
+                          height: nodeSize,
+                          borderRadius: '50%',
+                          background: isCompleted
+                            ? 'linear-gradient(135deg, #10b981, #059669)'
+                            : isCurrent
+                              ? 'linear-gradient(135deg, #6366f1, #06b6d4)'
+                              : 'rgba(30, 41, 59, 0.85)',
+                          border: isSelected
+                            ? '3px solid #ffffff'
+                            : isCurrent
+                              ? '3px solid var(--accent-cyan)'
+                              : '2px solid rgba(255,255,255,0.15)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: isCurrent 
+                            ? '0 0 25px rgba(6, 182, 212, 0.6)' 
+                            : isSelected 
+                              ? '0 0 20px rgba(255, 255, 255, 0.4)' 
+                              : '0 8px 24px rgba(0,0,0,0.4)',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {isCompleted ? (
+                          <CheckCircle2 size={32} color="#fff" />
+                        ) : isCurrent ? (
+                          <Play size={28} color="#fff" style={{ marginLeft: 3 }} />
+                        ) : (
+                          <BrainCircuit size={28} color="var(--text-muted)" />
+                        )}
                       </div>
 
-                      <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>{item.topic}</h4>
-                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.4' }}>{item.description}</p>
+                      {/* Phase Label Badge */}
+                      <div style={{
+                        textAlign: 'center',
+                        background: isSelected ? 'rgba(99,102,241,0.35)' : 'rgba(15, 23, 42, 0.95)',
+                        padding: '6px 14px',
+                        borderRadius: '12px',
+                        border: isSelected ? '1px solid var(--accent-cyan)' : '1px solid rgba(255,255,255,0.1)',
+                        maxWidth: '210px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                      }}>
+                        <span style={{ fontSize: '10px', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>
+                          {item.phase || `Phase ${idx + 1}`}
+                        </span>
+                        <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {item.topic}
+                        </h4>
+                      </div>
                     </div>
                   );
                 })}
