@@ -16,7 +16,7 @@ export async function initDb() {
         id SERIAL PRIMARY KEY,
         source_file TEXT NOT NULL,
         content TEXT NOT NULL,
-        embedding vector(1536),
+        embedding vector(384),
         created_at TIMESTAMP DEFAULT now()
       );
     `);

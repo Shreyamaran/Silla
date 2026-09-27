@@ -4,6 +4,7 @@ import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import pdfParse from 'pdf-parse';
 import { pool, initDb } from './db.js';
+import { chunkText, getEmbedding } from './embeddings.js';
 
 dotenv.config();
 
@@ -42,7 +43,30 @@ fastify.post('/upload', async (request, reply) => {
     text = buffer.toString('utf-8');
   }
 
-  return { filename: data.filename, textLength: text.length, preview: text.slice(0, 200) };
+  const chunks = chunkText(text);
+  let savedChunksCount = 0;
+
+  for (const chunk of chunks) {
+    try {
+      const embedding = await getEmbedding(chunk);
+      const embeddingSql = `[${embedding.join(',')}]`;
+      await pool.query(
+        'INSERT INTO note_chunks (source_file, content, embedding) VALUES ($1, $2, $3)',
+        [data.filename, chunk, embeddingSql]
+      );
+      savedChunksCount++;
+    } catch (err) {
+      console.error('Chunk insert notice:', err.message);
+    }
+  }
+
+  return {
+    filename: data.filename,
+    textLength: text.length,
+    chunksCount: chunks.length,
+    savedChunksCount,
+    preview: text.slice(0, 200)
+  };
 });
 
 const start = async () => {

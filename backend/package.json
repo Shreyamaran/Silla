@@ -15,6 +15,7 @@
     "@electric-sql/pglite": "^0.2.14",
     "@fastify/cors": "^10.1.0",
     "@fastify/multipart": "^9.4.0",
+    "@xenova/transformers": "^2.17.2",
     "dotenv": "^16.6.1",
     "fastify": "^5.12.5",
     "groq-sdk": "^0.8.0",
