@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import sillaLogo from '../assets/sillaLogo.jpeg';
 
 export default function FinalCTASection({ onStartLearning }) {
   return (
@@ -31,8 +32,8 @@ export default function FinalCTASection({ onStartLearning }) {
           boxShadow: '0 24px 60px rgba(0,0,0,0.6)'
         }}>
           
-          <div style={{ width: 48, height: 48, borderRadius: '12px', background: 'var(--color-puce)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', boxShadow: '0 0 20px rgba(118,46,63,0.5)' }}>
-            <Sparkles size={24} color="#ffffff" />
+          <div style={{ width: 56, height: 56, borderRadius: '14px', overflow: 'hidden', border: '2px solid var(--color-rosy)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', boxShadow: '0 0 24px rgba(118,46,63,0.6)', background: '#261a1d' }}>
+            <img src={sillaLogo} alt="Silla Mascot Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
 
           <h2 style={{ 

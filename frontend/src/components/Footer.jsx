@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
+import sillaLogo from '../assets/sillaLogo.jpeg';
 
 export default function Footer({ onStartLearning }) {
   const scrollToSection = (id) => {
@@ -23,12 +24,14 @@ export default function Footer({ onStartLearning }) {
               width: 36, 
               height: 36, 
               borderRadius: '8px', 
-              background: 'var(--color-puce)', 
+              overflow: 'hidden',
+              border: '1px solid rgba(185, 144, 153, 0.3)',
               display: 'flex', 
               alignItems: 'center', 
-              justifyContent: 'center' 
+              justifyContent: 'center',
+              background: '#261a1d'
             }}>
-              <Sparkles size={18} color="#ffffff" />
+              <img src={sillaLogo} alt="Silla Mascot Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div>
               <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>

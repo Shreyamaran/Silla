@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Compass, MessageSquare, HelpCircle, Play, CheckCircle2, BrainCircuit, Sparkles, Send, BookOpen } from 'lucide-react';
+import sillaLogo from '../assets/sillaLogo.jpeg';
 
 export default function ProductShowcaseSection({ onStartLearning }) {
   const [showcaseTab, setShowcaseTab] = useState('timeline'); // 'timeline', 'quiz', 'chat'
@@ -87,7 +88,8 @@ export default function ProductShowcaseSection({ onStartLearning }) {
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#762E3F' }} />
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#B99099' }} />
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#654C52' }} />
-              <span style={{ fontSize: '12px', color: 'var(--color-rosy)', marginLeft: '12px', fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
+              <img src={sillaLogo} alt="Silla" style={{ width: 20, height: 20, borderRadius: '50%', objectFit: 'cover', marginLeft: '8px' }} />
+              <span style={{ fontSize: '12px', color: 'var(--color-rosy)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
                 Silla Workspace — {showcaseTab === 'timeline' ? 'Personalized Study Path' : showcaseTab === 'quiz' ? 'Contextual Practice Quiz' : 'Grounded AI Companion'}
               </span>
             </div>
@@ -164,8 +166,12 @@ export default function ProductShowcaseSection({ onStartLearning }) {
             {/* STATE 2: QUIZ */}
             {showcaseTab === 'quiz' && (
               <div style={{ maxWidth: '640px', margin: '0 auto', background: 'rgba(38, 26, 29, 0.8)', padding: '28px', borderRadius: '16px', border: '1px solid rgba(185, 144, 153, 0.3)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700 }}>CONTEXTUAL QUIZ // TOPIC: BACKPROPAGATION</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', padding: '10px 14px', background: 'rgba(118, 46, 63, 0.2)', borderRadius: '10px', border: '1px solid rgba(185,144,153,0.2)' }}>
+                  <img src={sillaLogo} alt="Silla Mascot" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
+                  <div style={{ flex: 1 }}>
+                    <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700, display: 'block' }}>SILLA MASCOT PRACTICE CHALLENGE</span>
+                    <span style={{ fontSize: '12px', color: 'var(--color-platinum)', fontWeight: 600 }}>Topic: Backpropagation</span>
+                  </div>
                   <span style={{ fontSize: '11px', color: '#5A8F76', fontWeight: 700 }}>Score: 1 / 1</span>
                 </div>
 
@@ -186,8 +192,9 @@ export default function ProductShowcaseSection({ onStartLearning }) {
                   </div>
                 </div>
 
-                <div style={{ marginTop: '16px', padding: '12px 16px', borderRadius: '10px', background: 'rgba(185, 144, 153, 0.1)', border: '1px solid rgba(185, 144, 153, 0.2)', fontSize: '12px', color: 'var(--color-rosy)' }}>
-                  💡 Grounded in your uploaded notes: <i>Lecture_3_Backpropagation.pdf</i>
+                <div style={{ marginTop: '16px', padding: '12px 16px', borderRadius: '10px', background: 'rgba(185, 144, 153, 0.1)', border: '1px solid rgba(185, 144, 153, 0.2)', fontSize: '12px', color: 'var(--color-rosy)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <img src={sillaLogo} alt="Silla" style={{ width: 18, height: 18, borderRadius: '50%', objectFit: 'cover' }} />
+                  <span>Grounded in your uploaded notes: <i>Lecture_3_Backpropagation.pdf</i></span>
                 </div>
               </div>
             )}
@@ -195,22 +202,28 @@ export default function ProductShowcaseSection({ onStartLearning }) {
             {/* STATE 3: AI TUTOR */}
             {showcaseTab === 'chat' && (
               <div style={{ display: 'flex', flexDirection: 'column', height: '360px', background: 'rgba(18, 12, 14, 0.7)', borderRadius: '14px', border: '1px solid rgba(185, 144, 153, 0.2)', overflow: 'hidden' }}>
-                <div style={{ padding: '12px 20px', borderBottom: '1px solid rgba(185, 144, 153, 0.15)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Sparkles size={16} color="var(--color-rosy)" />
+                <div style={{ padding: '12px 20px', borderBottom: '1px solid rgba(185, 144, 153, 0.15)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img src={sillaLogo} alt="Silla Mascot" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-puce)' }} />
                   <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-platinum)' }}>Silla AI Study Companion</span>
                 </div>
 
                 <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px', overflowY: 'auto' }}>
-                  <div style={{ alignSelf: 'flex-start', background: 'rgba(38, 26, 29, 0.8)', padding: '12px 16px', borderRadius: '14px', border: '1px solid rgba(185,144,153,0.15)', maxWidth: '85%', fontSize: '13px', color: 'var(--color-platinum)' }}>
-                    Hello! Ask me any question grounded in your uploaded lecture notes or syllabus!
+                  <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start', maxWidth: '88%' }}>
+                    <img src={sillaLogo} alt="Silla" style={{ width: 26, height: 26, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-puce)', marginTop: '2px', flexShrink: 0 }} />
+                    <div style={{ background: 'rgba(38, 26, 29, 0.8)', padding: '12px 16px', borderRadius: '14px', border: '1px solid rgba(185,144,153,0.15)', fontSize: '13px', color: 'var(--color-platinum)' }}>
+                      Hello! Ask me any question grounded in your uploaded lecture notes or syllabus!
+                    </div>
                   </div>
                   <div style={{ alignSelf: 'flex-end', background: 'linear-gradient(135deg, var(--color-puce), var(--color-liver))', padding: '12px 16px', borderRadius: '14px', maxWidth: '80%', fontSize: '13px', color: '#ffffff' }}>
                     Can you explain backpropagation using my uploaded notes?
                   </div>
-                  <div style={{ alignSelf: 'flex-start', background: 'rgba(38, 26, 29, 0.9)', padding: '12px 16px', borderRadius: '14px', border: '1px solid rgba(185,144,153,0.2)', maxWidth: '85%', fontSize: '13px', color: 'var(--color-platinum)', lineHeight: '1.5' }}>
-                    Based on your notes in <i>Neural_Networks_Ch3.pdf</i>, backpropagation passes the prediction error backward through layer activation matrices to update weight vectors...
-                    <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', gap: '6px' }}>
-                      <BookOpen size={12} /> Source: Neural_Networks_Ch3.pdf
+                  <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start', maxWidth: '88%' }}>
+                    <img src={sillaLogo} alt="Silla" style={{ width: 26, height: 26, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-puce)', marginTop: '2px', flexShrink: 0 }} />
+                    <div style={{ background: 'rgba(38, 26, 29, 0.9)', padding: '12px 16px', borderRadius: '14px', border: '1px solid rgba(185,144,153,0.2)', fontSize: '13px', color: 'var(--color-platinum)', lineHeight: '1.5' }}>
+                      Based on your notes in <i>Neural_Networks_Ch3.pdf</i>, backpropagation passes the prediction error backward through layer activation matrices to update weight vectors...
+                      <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', gap: '6px' }}>
+                        <BookOpen size={12} /> Source: Neural_Networks_Ch3.pdf
+                      </div>
                     </div>
                   </div>
                 </div>

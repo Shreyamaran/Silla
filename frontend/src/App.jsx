@@ -24,6 +24,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import LandingPage from './components/LandingPage';
+import sillaLogo from './assets/sillaLogo.jpeg';
 
 const API_BASE = 'http://127.0.0.1:3001';
 
@@ -387,8 +388,8 @@ export default function App() {
 
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, var(--color-puce), var(--color-wenge))', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(232,221,221,0.2)' }}>
-            <Sparkles size={20} color="var(--color-platinum)" />
+          <div style={{ width: 38, height: 38, borderRadius: '10px', overflow: 'hidden', border: '1.5px solid rgba(185,144,153,0.3)', boxShadow: '0 4px 12px rgba(118,46,63,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#261a1d', flexShrink: 0 }}>
+            <img src={sillaLogo} alt="Silla Mascot Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
           <div>
             <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, color: 'var(--color-platinum)' }}>Silla</h1>
@@ -472,9 +473,12 @@ export default function App() {
         
         {/* Main Header with View Switcher */}
         <header className="glass-panel" style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', borderColor: 'rgba(185, 144, 153, 0.2)' }}>
-          <div>
-            <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700, textTransform: 'uppercase' }}>SELECTED STUDY TOPIC</span>
-            <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, color: 'var(--color-platinum)' }}>{activeChat.topic}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <img src={sillaLogo} alt="Silla Mascot" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-puce)' }} />
+            <div>
+              <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700, textTransform: 'uppercase' }}>SELECTED STUDY TOPIC</span>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, color: 'var(--color-platinum)' }}>{activeChat.topic}</h2>
+            </div>
           </div>
 
           {/* View Switcher: Chat vs Timeline */}
@@ -538,23 +542,39 @@ export default function App() {
 
             {/* Conversation Messages List */}
             <div style={{ flex: 1, padding: '20px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              
+              {/* Mascot Guidance Banner if no notes attached yet */}
+              {activeChat.files.length === 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: 'rgba(118, 46, 63, 0.15)', border: '1px solid rgba(185, 144, 153, 0.25)', borderRadius: '14px', padding: '14px 18px', marginBottom: '8px' }}>
+                  <img src={sillaLogo} alt="Silla Mascot" className="float-anim" style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--color-rosy)', flexShrink: 0, boxShadow: '0 0 16px rgba(118,46,63,0.4)' }} />
+                  <div>
+                    <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-platinum)' }}>Welcome to {activeChat.topic}! I'm Silla, your AI study mascot.</h4>
+                    <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '2px' }}>Upload your lecture notes, syllabus, or PDFs above to build your study timeline and ground all responses in your material.</p>
+                  </div>
+                </div>
+              )}
+
               {activeChat.messages.map((msg, i) => (
                 <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                  <div style={{
-                    maxWidth: '80%',
-                    padding: '12px 18px',
-                    borderRadius: '16px',
-                    fontSize: '14px',
-                    lineHeight: '1.5',
-                    background: msg.role === 'user' ? 'linear-gradient(135deg, var(--color-puce), var(--color-liver))' : 'rgba(38, 26, 29, 0.85)',
-                    color: '#fff',
-                    border: msg.role === 'user' ? 'none' : '1px solid rgba(185,144,153,0.2)'
-                  }}>
-                    {msg.content}
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', maxWidth: '85%', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
+                    {msg.role === 'assistant' && (
+                      <img src={sillaLogo} alt="Silla AI" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-puce)', marginTop: '2px', flexShrink: 0 }} />
+                    )}
+                    <div style={{
+                      padding: '12px 18px',
+                      borderRadius: '16px',
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      background: msg.role === 'user' ? 'linear-gradient(135deg, var(--color-puce), var(--color-liver))' : 'rgba(38, 26, 29, 0.85)',
+                      color: '#fff',
+                      border: msg.role === 'user' ? 'none' : '1px solid rgba(185,144,153,0.2)'
+                    }}>
+                      {msg.content}
+                    </div>
                   </div>
 
                   {msg.sources && msg.sources.length > 0 && (
-                    <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    <div style={{ marginTop: '6px', marginLeft: msg.role === 'user' ? 0 : '42px', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       <span>Sources:</span>
                       {msg.sources.map((s, sIdx) => (
                         <span key={sIdx} style={{ background: 'rgba(185,144,153,0.15)', padding: '2px 6px', borderRadius: '4px' }}>📄 {s.file}</span>
@@ -563,6 +583,16 @@ export default function App() {
                   )}
                 </div>
               ))}
+
+              {/* Chat Response Loading State */}
+              {isSendingChat && (
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', alignSelf: 'flex-start', opacity: 0.9 }}>
+                  <img src={sillaLogo} alt="Silla AI" className="float-anim" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-rosy)', boxShadow: '0 0 12px rgba(185,144,153,0.4)', flexShrink: 0 }} />
+                  <div style={{ background: 'rgba(38, 26, 29, 0.85)', border: '1px solid rgba(185, 144, 153, 0.2)', padding: '10px 16px', borderRadius: '16px 16px 16px 4px', fontSize: '13px', color: 'var(--color-rosy)', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <RefreshCw size={13} className="spin" /> Silla is analyzing your material...
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Chat Input */}
@@ -598,15 +628,26 @@ export default function App() {
             {/* Timeline Phases View */}
             <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto', borderColor: 'rgba(185, 144, 153, 0.2)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>{activeChat.topic} — Study Timeline</h3>
-                  <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '2px' }}>Sequenced learning phases generated from material uploaded to this topic chat.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <img src={sillaLogo} alt="Silla Mascot" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-rosy)' }} />
+                  <div>
+                    <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>{activeChat.topic} — Study Timeline</h3>
+                    <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '2px' }}>Sequenced learning phases generated from material uploaded to this topic chat.</p>
+                  </div>
                 </div>
                 <button className="btn-secondary" onClick={() => regenerateTimelineForChat(activeChat.id, activeChat.topic)} disabled={isGeneratingTimeline}>
                   <RefreshCw size={14} className={isGeneratingTimeline ? 'spin' : ''} />
                   {isGeneratingTimeline ? 'Regenerating...' : 'Regenerate'}
                 </button>
               </div>
+
+              {/* Timeline Regeneration Loading Alert */}
+              {isGeneratingTimeline && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', background: 'rgba(118, 46, 63, 0.2)', borderRadius: '12px', border: '1px solid var(--color-puce)' }}>
+                  <img src={sillaLogo} alt="Silla Mascot" className="float-anim" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-rosy)', flexShrink: 0 }} />
+                  <span style={{ fontSize: '13px', color: 'var(--color-platinum)', fontWeight: 600 }}>Silla is reading your uploaded material & mapping out your study timeline...</span>
+                </div>
+              )}
 
               {/* Duolingo Winding Path of Circular Nodes */}
               <div style={{ position: 'relative', margin: '30px 0', padding: '20px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '52px' }}>
@@ -667,7 +708,8 @@ export default function App() {
                     >
                       {/* Floating Speech Bubble Above Active Node */}
                       {isCurrent && (
-                        <div className="speech-bubble" style={{ background: 'var(--color-puce)' }}>
+                        <div className="speech-bubble" style={{ background: 'var(--color-puce)', display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px' }}>
+                          <img src={sillaLogo} alt="Silla" style={{ width: 14, height: 14, borderRadius: '50%', objectFit: 'cover' }} />
                           START
                         </div>
                       )}
@@ -719,9 +761,12 @@ export default function App() {
 
                 return (
                   <>
-                    <div>
-                      <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700 }}>SELECTED PHASE CONTENT</span>
-                      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, marginTop: '4px', color: 'var(--color-platinum)' }}>{phaseToDisplay.phase || phaseToDisplay.topic}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <img src={sillaLogo} alt="Silla Mascot" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-rosy)', flexShrink: 0 }} />
+                      <div>
+                        <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700 }}>SELECTED PHASE CONTENT</span>
+                        <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, marginTop: '2px', color: 'var(--color-platinum)' }}>{phaseToDisplay.phase || phaseToDisplay.topic}</h3>
+                      </div>
                     </div>
 
                     <div style={{ background: 'rgba(118, 46, 63, 0.15)', padding: '16px', borderRadius: '12px', borderLeft: '4px solid var(--color-puce)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -755,9 +800,12 @@ export default function App() {
               <X size={20} />
             </button>
 
-            <div>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>Create New Topic Chat</h3>
-              <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '4px' }}>Enter the name of the subject or course topic (e.g. Operating Systems, DBMS, Networks).</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <img src={sillaLogo} alt="Silla Mascot" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-puce)', flexShrink: 0 }} />
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>Create New Topic Chat</h3>
+                <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '2px' }}>Enter the subject or course topic (e.g. Operating Systems, DBMS).</p>
+              </div>
             </div>
 
             <input
@@ -795,14 +843,17 @@ export default function App() {
 
             {isGeneratingQuiz ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <Sparkles size={36} color="var(--color-rosy)" className="float-anim" />
-                <h3 style={{ marginTop: '16px', fontSize: '18px', color: 'var(--color-platinum)', fontFamily: 'var(--font-serif)' }}>Generating Phase Quiz Questions...</h3>
-                <p style={{ fontSize: '12px', color: 'var(--color-rosy)' }}>Using local AI model grounded in material for {activeQuizPhaseName}</p>
+                <img src={sillaLogo} alt="Silla Mascot" className="float-anim" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--color-rosy)', boxShadow: '0 0 24px rgba(118,46,63,0.6)', margin: '0 auto' }} />
+                <h3 style={{ marginTop: '16px', fontSize: '18px', color: 'var(--color-platinum)', fontFamily: 'var(--font-serif)' }}>Silla is generating Phase Quiz questions...</h3>
+                <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '4px' }}>Grounding question set in material for {activeQuizPhaseName}</p>
               </div>
             ) : quizQuestions.length > 0 ? (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--color-rosy)', fontWeight: 700 }}>{activeQuizPhaseName.toUpperCase()} — Q{currentQuestionIdx + 1}/{quizQuestions.length}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <img src={sillaLogo} alt="Silla Mascot" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }} />
+                    <span style={{ fontSize: '12px', color: 'var(--color-rosy)', fontWeight: 700 }}>{activeQuizPhaseName.toUpperCase()} — Q{currentQuestionIdx + 1}/{quizQuestions.length}</span>
+                  </div>
                   <span style={{ fontSize: '12px', color: '#5A8F76', fontWeight: 700 }}>Score: {quizScore}</span>
                 </div>
 
@@ -839,13 +890,16 @@ export default function App() {
                 </div>
 
                 {quizResult && (
-                  <div style={{ marginTop: '20px', padding: '14px', borderRadius: '12px', background: 'rgba(185,144,153,0.1)', fontSize: '13px' }}>
-                    <p style={{ fontWeight: 600, color: quizResult.isCorrect ? '#5A8F76' : 'var(--color-rosy)' }}>{quizResult.feedback}</p>
-                    <p style={{ color: 'var(--color-platinum)', opacity: 0.8, marginTop: '4px' }}>{quizQuestions[currentQuestionIdx].explanation}</p>
+                  <div style={{ marginTop: '20px', padding: '16px', borderRadius: '12px', background: 'rgba(185,144,153,0.1)', border: '1px solid rgba(185,144,153,0.2)', fontSize: '13px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <img src={sillaLogo} alt="Silla Mascot" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-rosy)', flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontWeight: 600, color: quizResult.isCorrect ? '#5A8F76' : 'var(--color-rosy)' }}>{quizResult.feedback}</p>
+                      <p style={{ color: 'var(--color-platinum)', opacity: 0.85, marginTop: '4px' }}>{quizQuestions[currentQuestionIdx].explanation}</p>
 
-                    <button className="btn-primary" onClick={handleNextQuestion} style={{ marginTop: '14px', width: '100%', justifyContent: 'center' }}>
-                      {currentQuestionIdx < quizQuestions.length - 1 ? 'Next Question' : 'Finish Phase Quiz'} <ChevronRight size={16} />
-                    </button>
+                      <button className="btn-primary" onClick={handleNextQuestion} style={{ marginTop: '14px', width: '100%', justifyContent: 'center' }}>
+                        {currentQuestionIdx < quizQuestions.length - 1 ? 'Next Question' : 'Finish Phase Quiz'} <ChevronRight size={16} />
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

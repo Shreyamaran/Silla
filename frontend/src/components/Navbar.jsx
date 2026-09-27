@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Menu, X, ArrowRight } from 'lucide-react';
+import sillaLogo from '../assets/sillaLogo.jpeg';
 
 export default function Navbar({ onStartLearning }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,14 +52,16 @@ export default function Navbar({ onStartLearning }) {
             width: 38, 
             height: 38, 
             borderRadius: '10px', 
-            background: 'linear-gradient(135deg, var(--color-puce), var(--color-wenge))', 
-            display: 'flex', 
-            alignItems: 'center', 
+            overflow: 'hidden',
+            border: '1.5px solid rgba(185, 144, 153, 0.3)',
+            boxShadow: '0 4px 12px rgba(118, 46, 63, 0.3)',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
-            border: '1px solid rgba(232, 221, 221, 0.2)',
-            boxShadow: '0 4px 12px rgba(118, 46, 63, 0.3)'
+            background: '#261a1d',
+            flexShrink: 0
           }}>
-            <Sparkles size={20} color="var(--color-platinum)" />
+            <img src={sillaLogo} alt="Silla Mascot Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
           <div>
             <span style={{ fontFamily: 'var(--font-serif)', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--color-platinum)' }}>

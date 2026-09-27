@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, BookOpen, CheckCircle, ArrowRight } from 'lucide-react';
+import sillaLogo from '../assets/sillaLogo.jpeg';
 
 export default function TutorSection({ onStartLearning }) {
   return (
@@ -21,7 +22,7 @@ export default function TutorSection({ onStartLearning }) {
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(185, 144, 153, 0.15)', paddingBottom: '14px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Sparkles size={18} color="var(--color-rosy)" />
+                <img src={sillaLogo} alt="Silla Mascot" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-puce)' }} />
                 <span style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontWeight: 700, color: 'var(--color-platinum)' }}>
                   Silla Grounded AI Tutor
                 </span>
@@ -40,11 +41,14 @@ export default function TutorSection({ onStartLearning }) {
               </div>
 
               {/* Turn 1: Assistant with Citation */}
-              <div style={{ alignSelf: 'flex-start', background: 'rgba(38, 26, 29, 0.85)', border: '1px solid rgba(185, 144, 153, 0.2)', padding: '14px 18px', borderRadius: '16px 16px 16px 4px', color: 'var(--color-platinum)', fontSize: '14px', lineHeight: '1.5', maxWidth: '90%' }}>
-                Based on your notes in <span style={{ color: 'var(--color-rosy)', fontWeight: 600 }}>Lecture_3_NeuralNets.pdf</span>, backpropagation works by calculating the partial derivatives of the loss function with respect to weights using the chain rule, stepping backwards from output layers.
-                
-                <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(185, 144, 153, 0.15)', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <BookOpen size={13} /> Grounded source: 📄 Lecture_3_NeuralNets.pdf (Chunk 14)
+              <div style={{ display: 'flex', gap: '10px', alignSelf: 'flex-start', maxWidth: '92%' }}>
+                <img src={sillaLogo} alt="Silla AI" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-puce)', marginTop: '2px', flexShrink: 0 }} />
+                <div style={{ background: 'rgba(38, 26, 29, 0.85)', border: '1px solid rgba(185, 144, 153, 0.2)', padding: '14px 18px', borderRadius: '16px 16px 16px 4px', color: 'var(--color-platinum)', fontSize: '14px', lineHeight: '1.5', flex: 1 }}>
+                  Based on your notes in <span style={{ color: 'var(--color-rosy)', fontWeight: 600 }}>Lecture_3_NeuralNets.pdf</span>, backpropagation works by calculating the partial derivatives of the loss function with respect to weights using the chain rule, stepping backwards from output layers.
+                  
+                  <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(185, 144, 153, 0.15)', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <BookOpen size={13} /> Grounded source: 📄 Lecture_3_NeuralNets.pdf (Chunk 14)
+                  </div>
                 </div>
               </div>
 
@@ -54,11 +58,14 @@ export default function TutorSection({ onStartLearning }) {
               </div>
 
               {/* Turn 2: Assistant Quiz Prompt */}
-              <div style={{ alignSelf: 'flex-start', background: 'rgba(38, 26, 29, 0.85)', border: '1px solid rgba(185, 144, 153, 0.2)', padding: '14px 18px', borderRadius: '16px 16px 16px 4px', color: 'var(--color-platinum)', fontSize: '14px', lineHeight: '1.5', maxWidth: '90%' }}>
-                Let's test your understanding!
-                <div style={{ marginTop: '10px', padding: '10px 14px', background: 'rgba(18, 12, 14, 0.6)', borderRadius: '8px', border: '1px solid rgba(185, 144, 153, 0.2)' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--color-rosy)', fontWeight: 700, display: 'block', marginBottom: '4px' }}>QUESTION:</span>
-                  What parameter is adjusted during the backward pass?
+              <div style={{ display: 'flex', gap: '10px', alignSelf: 'flex-start', maxWidth: '92%' }}>
+                <img src={sillaLogo} alt="Silla AI" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-puce)', marginTop: '2px', flexShrink: 0 }} />
+                <div style={{ background: 'rgba(38, 26, 29, 0.85)', border: '1px solid rgba(185, 144, 153, 0.2)', padding: '14px 18px', borderRadius: '16px 16px 16px 4px', color: 'var(--color-platinum)', fontSize: '14px', lineHeight: '1.5', flex: 1 }}>
+                  Let's test your understanding!
+                  <div style={{ marginTop: '10px', padding: '10px 14px', background: 'rgba(18, 12, 14, 0.6)', borderRadius: '8px', border: '1px solid rgba(185, 144, 153, 0.2)' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--color-rosy)', fontWeight: 700, display: 'block', marginBottom: '4px' }}>QUESTION:</span>
+                    What parameter is adjusted during the backward pass?
+                  </div>
                 </div>
               </div>
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, FileText, Layers, HelpCircle, MessageSquare, Compass, ShieldCheck } from 'lucide-react';
+import sillaLogo from '../assets/sillaLogo.jpeg';
 
 export default function SolutionSection() {
   return (
@@ -80,17 +81,18 @@ export default function SolutionSection() {
             {/* Center Core: SILLA */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
               <div className="pulse-node" style={{ 
-                width: 72, 
-                height: 72, 
+                width: 76, 
+                height: 76, 
                 borderRadius: '50%', 
-                background: 'linear-gradient(135deg, var(--color-puce), var(--color-liver))', 
-                border: '2px solid var(--color-platinum)', 
+                overflow: 'hidden',
+                border: '2.5px solid var(--color-rosy)', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                boxShadow: '0 0 30px rgba(118, 46, 63, 0.6)'
+                boxShadow: '0 0 30px rgba(118, 46, 63, 0.6)',
+                background: '#261a1d'
               }}>
-                <Sparkles size={32} color="#ffffff" />
+                <img src={sillaLogo} alt="Silla Mascot Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 700, color: 'var(--color-platinum)' }}>
                 Silla

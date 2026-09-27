@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, BrainCircuit, CheckCircle2, Play, Sparkles, FileText, HelpCircle } from 'lucide-react';
+import sillaLogo from '../assets/sillaLogo.jpeg';
 
 export default function HeroSection({ onStartLearning }) {
   const scrollToHowItWorks = () => {
@@ -38,7 +39,8 @@ export default function HeroSection({ onStartLearning }) {
           {/* Left Hero Content */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
             {/* Tag / Badge */}
-            <div className="badge-editorial" style={{ marginBottom: '20px' }}>
+            <div className="badge-editorial" style={{ marginBottom: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <img src={sillaLogo} alt="Silla Mascot" style={{ width: 20, height: 20, borderRadius: '50%', objectFit: 'cover' }} />
               ✦ SOVEREIGN AI STUDY ORCHESTRATOR
             </div>
 
@@ -120,7 +122,7 @@ export default function HeroSection({ onStartLearning }) {
               {/* Card Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', borderBottom: '1px solid rgba(185,144,153,0.15)', paddingBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <BrainCircuit size={20} color="var(--color-rosy)" />
+                  <img src={sillaLogo} alt="Silla Mascot" style={{ width: 24, height: 24, borderRadius: '6px', objectFit: 'cover', border: '1px solid rgba(185,144,153,0.3)' }} />
                   <span style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontWeight: 700, letterSpacing: '1px', color: 'var(--color-platinum)', textTransform: 'uppercase' }}>
                     Silla Path Matrix
                   </span>
@@ -176,6 +178,7 @@ export default function HeroSection({ onStartLearning }) {
                     width: 48, 
                     height: 48, 
                     borderRadius: '50%', 
+                    overflow: 'hidden',
                     background: 'var(--color-liver)', 
                     border: '2px solid var(--color-rosy)', 
                     display: 'flex', 
@@ -183,7 +186,7 @@ export default function HeroSection({ onStartLearning }) {
                     justifyContent: 'center',
                     boxShadow: '0 0 12px rgba(112,74,76,0.4)'
                   }}>
-                    <Sparkles size={20} color="var(--color-platinum)" />
+                    <img src={sillaLogo} alt="Silla Mascot" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                   <div style={{ flex: 1, background: 'rgba(112,74,76,0.25)', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(185,144,153,0.2)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
