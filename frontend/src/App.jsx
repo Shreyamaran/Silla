@@ -16,12 +16,15 @@ import {
   Sparkles, 
   UploadCloud, 
   X, 
-  Zap 
+  Zap,
+  ArrowLeft
 } from 'lucide-react';
+import LandingPage from './components/LandingPage';
 
 const API_BASE = 'http://127.0.0.1:3001';
 
 export default function App() {
+  const [view, setView] = useState('landing'); // 'landing' or 'app'
   const [activeTab, setActiveTab] = useState('timeline'); // 'timeline', 'resources', 'chat'
   const [serverHealth, setServerHealth] = useState('checking');
 
@@ -238,27 +241,67 @@ export default function App() {
     }
   };
 
+  // Render Landing Page
+  if (view === 'landing') {
+    return (
+      <LandingPage 
+        onStartLearning={(targetTab) => {
+          if (targetTab === 'quiz' || targetTab === 'timeline') setActiveTab('timeline');
+          else if (targetTab === 'chat') setActiveTab('chat');
+          else if (targetTab === 'resources') setActiveTab('resources');
+          setView('app');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }} 
+      />
+    );
+  }
+
+  // Render Silla Application Workspace
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-dark)' }}>
       {/* Top Navbar */}
       <header className="glass-panel" style={{ margin: '16px 24px 0 24px', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: 42, height: 42, borderRadius: '12px', background: 'linear-gradient(135deg, #6366f1, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 15px rgba(99,102,241,0.5)' }}>
-            <Sparkles size={24} color="#fff" />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.5px' }}>Silla</h1>
-            <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>SOVEREIGN AI STUDY ORCHESTRATOR</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button 
+            onClick={() => setView('landing')}
+            style={{ 
+              background: 'rgba(185, 144, 153, 0.12)', 
+              border: '1px solid rgba(185, 144, 153, 0.25)', 
+              color: 'var(--color-platinum)', 
+              padding: '6px 14px', 
+              borderRadius: '8px', 
+              fontSize: '12px', 
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
+            }}
+          >
+            <ArrowLeft size={14} /> Landing Page
+          </button>
+
+          <div style={{ width: 1, height: 24, background: 'rgba(185,144,153,0.2)' }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: 38, height: 38, borderRadius: '10px', background: 'linear-gradient(135deg, var(--color-puce), var(--color-wenge))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 15px rgba(118,46,63,0.4)', border: '1px solid rgba(232,221,221,0.2)' }}>
+              <Sparkles size={20} color="var(--color-platinum)" />
+            </div>
+            <div>
+              <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--color-platinum)' }}>Silla</h1>
+              <p style={{ fontSize: '10px', color: 'var(--color-rosy)', fontWeight: 600, letterSpacing: '0.8px' }}>SOVEREIGN AI STUDY ORCHESTRATOR</p>
+            </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <nav style={{ display: 'flex', gap: '8px', background: 'rgba(0,0,0,0.3)', padding: '6px', borderRadius: '12px' }}>
+        <nav style={{ display: 'flex', gap: '8px', background: 'rgba(18, 12, 14, 0.6)', padding: '6px', borderRadius: '12px', border: '1px solid rgba(185, 144, 153, 0.15)' }}>
           <button 
             onClick={() => setActiveTab('timeline')}
             style={{ 
-              background: activeTab === 'timeline' ? 'var(--accent-primary)' : 'transparent',
-              color: activeTab === 'timeline' ? '#fff' : 'var(--text-muted)',
+              background: activeTab === 'timeline' ? 'var(--color-puce)' : 'transparent',
+              color: activeTab === 'timeline' ? '#fff' : 'var(--color-rosy)',
               border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
             }}
           >
@@ -267,8 +310,8 @@ export default function App() {
           <button 
             onClick={() => setActiveTab('resources')}
             style={{ 
-              background: activeTab === 'resources' ? 'var(--accent-primary)' : 'transparent',
-              color: activeTab === 'resources' ? '#fff' : 'var(--text-muted)',
+              background: activeTab === 'resources' ? 'var(--color-puce)' : 'transparent',
+              color: activeTab === 'resources' ? '#fff' : 'var(--color-rosy)',
               border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
             }}
           >
@@ -277,8 +320,8 @@ export default function App() {
           <button 
             onClick={() => setActiveTab('chat')}
             style={{ 
-              background: activeTab === 'chat' ? 'var(--accent-primary)' : 'transparent',
-              color: activeTab === 'chat' ? '#fff' : 'var(--text-muted)',
+              background: activeTab === 'chat' ? 'var(--color-puce)' : 'transparent',
+              color: activeTab === 'chat' ? '#fff' : 'var(--color-rosy)',
               border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
             }}
           >
@@ -293,15 +336,15 @@ export default function App() {
             display: 'flex', 
             alignItems: 'center', 
             gap: '8px', 
-            background: 'rgba(255,255,255,0.05)', 
+            background: 'rgba(185,144,153,0.08)', 
             padding: '6px 14px', 
             borderRadius: '20px',
             cursor: 'pointer',
-            border: '1px solid rgba(255,255,255,0.08)'
+            border: '1px solid rgba(185,144,153,0.18)'
           }}
         >
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: serverHealth === 'online' ? '#10b981' : '#f59e0b', boxShadow: serverHealth === 'online' ? '0 0 8px #10b981' : '0 0 8px #f59e0b' }} />
-          <span style={{ fontSize: '12px', color: serverHealth === 'online' ? '#10b981' : 'var(--text-muted)', fontWeight: 600 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: serverHealth === 'online' ? '#5A8F76' : '#C69A7B', boxShadow: serverHealth === 'online' ? '0 0 8px #5A8F76' : '0 0 8px #C69A7B' }} />
+          <span style={{ fontSize: '12px', color: serverHealth === 'online' ? '#5A8F76' : 'var(--color-rosy)', fontWeight: 600 }}>
             {serverHealth === 'online' ? 'Backend Ready' : 'Connecting to Backend...'}
           </span>
           <RefreshCw size={12} className={serverHealth !== 'online' ? 'spin' : ''} style={{ opacity: 0.7 }} />
@@ -311,15 +354,15 @@ export default function App() {
       {/* Main Content Area */}
       <main style={{ flex: 1, padding: '24px', maxWidth: '1200px', width: '100%', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
         
-        {/* TAB 1: STUDY PATH (DUOLINGO STYLE) */}
+        {/* TAB 1: STUDY PATH */}
         {activeTab === 'timeline' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px' }}>
             {/* Timeline View */}
             <div className="glass-panel" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h2 style={{ fontSize: '22px', fontWeight: 700 }}>Your Personalized Study Path</h2>
-                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Master topics sequentially using spaced recall & interactive quizzes.</p>
+                  <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '24px', fontWeight: 700, color: 'var(--color-platinum)' }}>Your Personalized Study Path</h2>
+                  <p style={{ fontSize: '13px', color: 'var(--color-rosy)', marginTop: '4px' }}>Master topics sequentially using spaced recall & interactive quizzes.</p>
                 </div>
                 <button className="btn-secondary" onClick={handleGenerateTimeline} disabled={isGeneratingTimeline}>
                   <RefreshCw size={14} className={isGeneratingTimeline ? 'spin' : ''} />
@@ -330,13 +373,13 @@ export default function App() {
               {/* Duolingo Style Nodes Path */}
               <div style={{ position: 'relative', margin: '30px 0', padding: '0 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '48px' }}>
                 {/* Connecting Line */}
-                <div style={{ position: 'absolute', top: 30, bottom: 30, width: 4, background: 'linear-gradient(to bottom, #10b981, #6366f1, rgba(255,255,255,0.1))', borderRadius: 2, zIndex: 1 }} />
+                <div style={{ position: 'absolute', top: 30, bottom: 30, width: 3, background: 'linear-gradient(to bottom, #5A8F76, var(--color-puce), rgba(185,144,153,0.2))', borderRadius: 2, zIndex: 1 }} />
 
                 {timeline.map((node, idx) => {
                   const isCurrent = node.status === 'current' || idx === 1;
                   const isCompleted = node.status === 'completed' || idx === 0;
 
-                  // Staggered node offsets for playful path shape
+                  // Staggered node offsets for path shape
                   const offsets = [0, 45, -45, 30, -30];
                   const xOffset = offsets[idx % offsets.length];
 
@@ -362,15 +405,15 @@ export default function App() {
                           height: 64,
                           borderRadius: '50%',
                           background: isCompleted 
-                            ? 'linear-gradient(135deg, #10b981, #059669)' 
+                            ? 'linear-gradient(135deg, #5A8F76, #3B6B54)' 
                             : isCurrent 
-                              ? 'linear-gradient(135deg, #6366f1, #06b6d4)' 
-                              : 'rgba(30, 41, 59, 0.8)',
-                          border: isCurrent ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.15)',
+                              ? 'linear-gradient(135deg, var(--color-puce), var(--color-wenge))' 
+                              : 'rgba(38, 26, 29, 0.8)',
+                          border: isCurrent ? '3px solid #ffffff' : '2px solid rgba(185,144,153,0.25)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+                          boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
                           transition: 'all 0.3s ease'
                         }}
                       >
@@ -379,13 +422,13 @@ export default function App() {
                         ) : isCurrent ? (
                           <Play size={26} color="#fff" style={{ marginLeft: 4 }} />
                         ) : (
-                          <BrainCircuit size={26} color="var(--text-muted)" />
+                          <BrainCircuit size={26} color="var(--color-rosy)" />
                         )}
                       </div>
 
-                      <div style={{ textAlign: 'center', background: 'rgba(15, 23, 42, 0.9)', padding: '6px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', maxWidth: '200px' }}>
-                        <span style={{ fontSize: '10px', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>{node.dueDate || `Step ${idx + 1}`}</span>
-                        <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{node.topic}</h4>
+                      <div style={{ textAlign: 'center', background: 'rgba(18, 12, 14, 0.95)', padding: '6px 14px', borderRadius: '12px', border: '1px solid rgba(185,144,153,0.2)', maxWidth: '200px' }}>
+                        <span style={{ fontSize: '10px', color: 'var(--color-rosy)', fontWeight: 700, textTransform: 'uppercase' }}>{node.dueDate || `Step ${idx + 1}`}</span>
+                        <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-platinum)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{node.topic}</h4>
                       </div>
                     </div>
                   );
@@ -395,32 +438,32 @@ export default function App() {
 
             {/* Sidebar Topic Focus Card */}
             <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <BookOpen size={20} color="var(--accent-cyan)" /> Node Overview
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 700, color: 'var(--color-platinum)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <BookOpen size={20} color="var(--color-rosy)" /> Node Overview
               </h3>
 
               {selectedNode ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ background: 'rgba(99,102,241,0.1)', padding: '12px 16px', borderRadius: '12px', borderLeft: '4px solid var(--accent-primary)' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--accent-primary)', fontWeight: 700 }}>ACTIVE TOPIC</span>
-                    <h4 style={{ fontSize: '16px', fontWeight: 700, marginTop: '2px' }}>{selectedNode.topic}</h4>
+                  <div style={{ background: 'rgba(118,46,63,0.2)', padding: '12px 16px', borderRadius: '12px', borderLeft: '4px solid var(--color-puce)' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 700 }}>ACTIVE TOPIC</span>
+                    <h4 style={{ fontSize: '16px', fontWeight: 700, marginTop: '2px', color: 'var(--color-platinum)' }}>{selectedNode.topic}</h4>
                   </div>
-                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>{selectedNode.description}</p>
+                  <p style={{ fontSize: '13px', color: 'rgba(232,221,221,0.8)', lineHeight: '1.5' }}>{selectedNode.description}</p>
                   
                   <button className="btn-primary" onClick={() => startQuiz(selectedNode.topic)} style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}>
                     <Zap size={16} /> Launch Practice Quiz
                   </button>
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', padding: '40px 10px', color: 'var(--text-muted)' }}>
-                  <BrainCircuit size={40} style={{ opacity: 0.3, marginBottom: '12px' }} />
+                <div style={{ textAlign: 'center', padding: '40px 10px', color: 'var(--color-rosy)' }}>
+                  <BrainCircuit size={40} style={{ opacity: 0.4, marginBottom: '12px' }} />
                   <p style={{ fontSize: '13px' }}>Click any node on the timeline path to view topic details and practice quizzes.</p>
                 </div>
               )}
 
               {/* Quick Actions */}
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', marginTop: 'auto' }}>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>QUICK STUDY ACTIONS</span>
+              <div style={{ borderTop: '1px solid rgba(185,144,153,0.15)', paddingTop: '16px', marginTop: 'auto' }}>
+                <span style={{ fontSize: '11px', color: 'var(--color-rosy)', fontWeight: 600 }}>QUICK STUDY ACTIONS</span>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
                   <button className="btn-secondary" onClick={() => setActiveTab('chat')} style={{ fontSize: '12px', justifyContent: 'flex-start' }}>
                     <MessageSquare size={14} /> Ask Silla about this syllabus
@@ -438,18 +481,18 @@ export default function App() {
         {activeTab === 'resources' && (
           <div className="glass-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
             <div>
-              <h2 style={{ fontSize: '24px', fontWeight: 800 }}>Knowledge Base & Document Upload</h2>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>Upload notes, PDF syllabus, or timetables. Silla parses and vector-indexes them locally for semantic retrieval.</p>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '26px', fontWeight: 700, color: 'var(--color-platinum)' }}>Knowledge Base & Document Upload</h2>
+              <p style={{ fontSize: '14px', color: 'var(--color-rosy)', marginTop: '4px' }}>Upload notes, PDF syllabus, or timetables. Silla parses and vector-indexes them locally for semantic retrieval.</p>
             </div>
 
             {/* Upload Drag & Drop Area */}
             <label style={{ 
-              border: '2px dashed var(--border-glow)', 
+              border: '2px dashed rgba(185,144,153,0.4)', 
               borderRadius: '16px', 
               padding: '48px 24px', 
               textAlign: 'center', 
               cursor: 'pointer',
-              background: 'rgba(99,102,241,0.03)',
+              background: 'rgba(101,76,82,0.12)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -457,12 +500,12 @@ export default function App() {
               transition: 'all 0.2s ease'
             }}>
               <input type="file" accept=".pdf,.txt,.md" onChange={handleFileUpload} style={{ display: 'none' }} disabled={isUploading} />
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <UploadCloud size={28} color="var(--accent-primary)" />
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(118,46,63,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <UploadCloud size={28} color="var(--color-rosy)" />
               </div>
               <div>
-                <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Click or Drag & Drop Study Files</h3>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Supports PDF documents, plain text (.txt), and Markdown (.md)</p>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-platinum)' }}>Click or Drag & Drop Study Files</h3>
+                <p style={{ fontSize: '12px', color: 'var(--color-rosy)', marginTop: '4px' }}>Supports PDF documents, plain text (.txt), and Markdown (.md)</p>
               </div>
             </label>
 
@@ -471,9 +514,9 @@ export default function App() {
               <div style={{ 
                 padding: '14px 18px', 
                 borderRadius: '12px', 
-                background: uploadStatus.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
-                border: `1px solid ${uploadStatus.type === 'success' ? '#10b981' : '#f43f5e'}`,
-                color: uploadStatus.type === 'success' ? '#10b981' : '#f43f5e',
+                background: uploadStatus.type === 'success' ? 'rgba(90, 143, 118, 0.15)' : 'rgba(118, 46, 63, 0.2)',
+                border: `1px solid ${uploadStatus.type === 'success' ? '#5A8F76' : 'var(--color-puce)'}`,
+                color: uploadStatus.type === 'success' ? '#5A8F76' : 'var(--color-platinum)',
                 fontSize: '13px',
                 fontWeight: 500
               }}>
@@ -483,13 +526,13 @@ export default function App() {
 
             {/* Indexed Notes Summary */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 700 }}>Vector Indexed Resources</h3>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-platinum)' }}>Vector Indexed Resources</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
                 <div className="glass-panel" style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <FileText size={24} color="var(--accent-cyan)" />
+                  <FileText size={24} color="var(--color-rosy)" />
                   <div>
-                    <h4 style={{ fontSize: '14px', fontWeight: 600 }}>Syllabus & Lecture Notes</h4>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Indexed in pgvector DB</span>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-platinum)' }}>Syllabus & Lecture Notes</h4>
+                    <span style={{ fontSize: '11px', color: 'var(--color-rosy)' }}>Indexed in local vector DB</span>
                   </div>
                 </div>
               </div>
@@ -501,12 +544,12 @@ export default function App() {
         {activeTab === 'chat' && (
           <div className="glass-panel" style={{ height: '620px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Chat Header */}
-            <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(185,144,153,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Sparkles size={20} color="var(--accent-cyan)" />
-                <h3 style={{ fontSize: '16px', fontWeight: 700 }}>Silla AI Study Companion</h3>
+                <Sparkles size={20} color="var(--color-rosy)" />
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '18px', fontWeight: 700, color: 'var(--color-platinum)' }}>Silla AI Study Companion</h3>
               </div>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '12px' }}>Groq RAG Model</span>
+              <span style={{ fontSize: '11px', color: 'var(--color-rosy)', background: 'rgba(185,144,153,0.1)', padding: '4px 10px', borderRadius: '12px' }}>Local RAG Engine</span>
             </div>
 
             {/* Messages Area */}
@@ -519,19 +562,19 @@ export default function App() {
                     borderRadius: '16px', 
                     fontSize: '14px', 
                     lineHeight: '1.5',
-                    background: msg.role === 'user' ? 'linear-gradient(135deg, var(--accent-primary), var(--accent-cyan))' : 'rgba(30, 41, 59, 0.8)',
+                    background: msg.role === 'user' ? 'linear-gradient(135deg, var(--color-puce), var(--color-liver))' : 'rgba(38, 26, 29, 0.85)',
                     color: '#fff',
-                    border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)'
+                    border: msg.role === 'user' ? 'none' : '1px solid rgba(185,144,153,0.2)'
                   }}>
                     {msg.content}
                   </div>
 
                   {/* Sources Citation */}
                   {msg.sources && msg.sources.length > 0 && (
-                    <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--color-rosy)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       <span>Sources used:</span>
                       {msg.sources.map((s, sIdx) => (
-                        <span key={sIdx} style={{ background: 'rgba(255,255,255,0.06)', padding: '2px 6px', borderRadius: '4px' }}>📄 {s.file}</span>
+                        <span key={sIdx} style={{ background: 'rgba(185,144,153,0.15)', padding: '2px 6px', borderRadius: '4px' }}>📄 {s.file}</span>
                       ))}
                     </div>
                   )}
@@ -540,7 +583,7 @@ export default function App() {
             </div>
 
             {/* Chat Input Bar */}
-            <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '12px' }}>
+            <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(185,144,153,0.15)', display: 'flex', gap: '12px' }}>
               <input 
                 type="text" 
                 placeholder="Ask Silla a question about your study material..."
@@ -549,8 +592,8 @@ export default function App() {
                 onKeyDown={e => e.key === 'Enter' && handleSendChat()}
                 style={{ 
                   flex: 1, 
-                  background: 'rgba(15, 23, 42, 0.8)', 
-                  border: '1px solid rgba(255,255,255,0.12)', 
+                  background: 'rgba(18, 12, 14, 0.8)', 
+                  border: '1px solid rgba(185,144,153,0.25)', 
                   padding: '12px 18px', 
                   borderRadius: '12px', 
                   color: '#fff', 
@@ -568,26 +611,26 @@ export default function App() {
 
       {/* PRACTICE QUIZ MODAL */}
       {quizModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="glass-panel" style={{ width: '90%', maxWidth: '540px', padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative' }}>
-            <button onClick={() => setQuizModalOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+          <div className="glass-panel" style={{ width: '90%', maxWidth: '540px', padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', background: 'rgba(26, 17, 20, 0.95)', borderColor: 'rgba(185,144,153,0.3)' }}>
+            <button onClick={() => setQuizModalOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'var(--color-rosy)', cursor: 'pointer' }}>
               <X size={20} />
             </button>
 
             {isGeneratingQuiz ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <Sparkles size={36} color="var(--accent-primary)" className="float-anim" />
-                <h3 style={{ marginTop: '16px', fontSize: '18px' }}>Generating Quiz Questions...</h3>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Using Groq LLM grounded in your uploaded notes</p>
+                <Sparkles size={36} color="var(--color-rosy)" className="float-anim" />
+                <h3 style={{ marginTop: '16px', fontSize: '18px', color: 'var(--color-platinum)', fontFamily: 'var(--font-serif)' }}>Generating Quiz Questions...</h3>
+                <p style={{ fontSize: '12px', color: 'var(--color-rosy)' }}>Using local AI model grounded in your uploaded notes</p>
               </div>
             ) : quizQuestions.length > 0 ? (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--accent-cyan)', fontWeight: 700 }}>QUESTION {currentQuestionIdx + 1} OF {quizQuestions.length}</span>
-                  <span style={{ fontSize: '12px', color: 'var(--accent-emerald)', fontWeight: 700 }}>Score: {quizScore}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--color-rosy)', fontWeight: 700 }}>QUESTION {currentQuestionIdx + 1} OF {quizQuestions.length}</span>
+                  <span style={{ fontSize: '12px', color: '#5A8F76', fontWeight: 700 }}>Score: {quizScore}</span>
                 </div>
 
-                <h3 style={{ fontSize: '16px', fontWeight: 600, lineHeight: '1.5', marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-platinum)', lineHeight: '1.5', marginBottom: '20px' }}>
                   {quizQuestions[currentQuestionIdx].question}
                 </h3>
 
@@ -601,11 +644,11 @@ export default function App() {
                         padding: '14px 18px',
                         borderRadius: '12px',
                         background: selectedOption === idx 
-                          ? (idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? 'rgba(16, 185, 129, 0.2)' : 'rgba(244, 63, 94, 0.2)')
+                          ? (idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? 'rgba(90, 143, 118, 0.25)' : 'rgba(118, 46, 63, 0.25)')
                           : 'rgba(255,255,255,0.04)',
                         border: selectedOption === idx
-                          ? `1px solid ${idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? '#10b981' : '#f43f5e'}`
-                          : '1px solid rgba(255,255,255,0.08)',
+                          ? `1px solid ${idx === quizQuestions[currentQuestionIdx].correctAnswerIndex ? '#5A8F76' : 'var(--color-puce)'}`
+                          : '1px solid rgba(185,144,153,0.15)',
                         color: '#fff',
                         textAlign: 'left',
                         cursor: selectedOption === null ? 'pointer' : 'default',
@@ -620,9 +663,9 @@ export default function App() {
                 </div>
 
                 {quizResult && (
-                  <div style={{ marginTop: '20px', padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', fontSize: '13px' }}>
-                    <p style={{ fontWeight: 600, color: quizResult.isCorrect ? '#10b981' : '#f43f5e' }}>{quizResult.feedback}</p>
-                    <p style={{ color: 'var(--text-muted)', marginTop: '4px' }}>{quizQuestions[currentQuestionIdx].explanation}</p>
+                  <div style={{ marginTop: '20px', padding: '14px', borderRadius: '12px', background: 'rgba(185,144,153,0.1)', fontSize: '13px' }}>
+                    <p style={{ fontWeight: 600, color: quizResult.isCorrect ? '#5A8F76' : 'var(--color-rosy)' }}>{quizResult.feedback}</p>
+                    <p style={{ color: 'var(--color-platinum)', opacity: 0.8, marginTop: '4px' }}>{quizQuestions[currentQuestionIdx].explanation}</p>
 
                     <button className="btn-primary" onClick={handleNextQuestion} style={{ marginTop: '14px', width: '100%', justifyContent: 'center' }}>
                       {currentQuestionIdx < quizQuestions.length - 1 ? 'Next Question' : 'Finish Quiz'} <ChevronRight size={16} />
