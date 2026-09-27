@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import pdfParse from 'pdf-parse';
 import { pool, initDb } from './db.js';
 import { chunkText, getEmbedding } from './embeddings.js';
+import { askGroq } from './groq.js';
 
 dotenv.config();
 
@@ -15,6 +16,16 @@ fastify.register(multipart);
 
 fastify.get('/health', async (request, reply) => {
   return { status: 'ok' };
+});
+
+fastify.get('/groq-test', async (request, reply) => {
+  try {
+    const answer = await askGroq('Say hello in one sentence.');
+    return { answer };
+  } catch (err) {
+    reply.status(500);
+    return { error: 'Groq API error', details: err.message };
+  }
 });
 
 fastify.get('/db-check', async (request, reply) => {
