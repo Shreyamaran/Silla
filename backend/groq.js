@@ -13,7 +13,7 @@ export async function askGroq(prompt, systemPrompt = null) {
 
   const completion = await groq.chat.completions.create({
     messages,
-    model: 'llama-3.1-8b-instant'
+    model: 'qwen/qwen3.8-27b'
   });
   return completion.choices[0].message.content;
 }
