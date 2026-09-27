@@ -8,13 +8,16 @@ import {
   FileText, 
   HelpCircle, 
   Layers, 
+  Lock,
   MessageSquare, 
   Play, 
   Plus, 
   RefreshCw, 
   Send, 
   Sparkles, 
+  Star,
   Trash2, 
+  Trophy,
   UploadCloud, 
   X, 
   Zap 
@@ -585,11 +588,27 @@ export default function App() {
                   const isCurrent = status === 'current';
                   const isSelected = selectedPhase?.id === item.id || (selectedPhase === null && idx === 0);
 
-                  // Zig-zag offsets: left (-55), center (0), right (+55)...
-                  const offsets = [0, 55, 0, -55, 0, 45, -45];
+                  // Loosely scattered horizontal offsets (organic zig-zag)
+                  const offsets = [0, 65, -35, 75, -20, -70, 40];
                   const xOffset = offsets[idx % offsets.length];
 
                   const nodeSize = isCurrent ? 76 : 68;
+                  const nodeClass = isCompleted 
+                    ? 'duo-node-base duo-node-completed' 
+                    : isCurrent 
+                      ? 'duo-node-base duo-node-current' 
+                      : 'duo-node-base duo-node-locked';
+
+                  // Lucide icon per node state & type
+                  const renderNodeIcon = () => {
+                    if (isCompleted) {
+                      return idx % 2 === 0 ? <Star size={28} color="#fff" fill="currentColor" /> : <BookOpen size={28} color="#fff" />;
+                    }
+                    if (isCurrent) {
+                      return <Trophy size={32} color="#fff" fill="currentColor" />;
+                    }
+                    return <Lock size={24} color="#94a3b8" />;
+                  };
 
                   return (
                     <div
@@ -599,52 +618,37 @@ export default function App() {
                         position: 'relative',
                         zIndex: 2,
                         transform: `translateX(${xOffset}px)`,
-                        cursor: 'pointer',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         gap: '8px',
-                        transition: 'transform 0.3s ease'
+                        margin: '6px 0'
                       }}
                     >
-                      {/* Circular Landing Spot Node */}
+                      {/* Floating Speech Bubble Above Active Node */}
+                      {isCurrent && (
+                        <div className="speech-bubble">
+                          START
+                        </div>
+                      )}
+
+                      {/* Pulsing Outer Ring */}
+                      {isCurrent && <div className="pulse-ring-wrapper" />}
+
+                      {/* 3D Chunky Circular Node Button */}
                       <div
-                        className={isCurrent ? 'pulse-node' : ''}
+                        className={nodeClass}
                         style={{
                           width: nodeSize,
                           height: nodeSize,
-                          borderRadius: '50%',
-                          background: isCompleted
-                            ? 'linear-gradient(135deg, #10b981, #059669)'
-                            : isCurrent
-                              ? 'linear-gradient(135deg, #6366f1, #06b6d4)'
-                              : 'rgba(30, 41, 59, 0.85)',
-                          border: isSelected
-                            ? '3px solid #ffffff'
-                            : isCurrent
-                              ? '3px solid var(--accent-cyan)'
-                              : '2px solid rgba(255,255,255,0.15)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          boxShadow: isCurrent 
-                            ? '0 0 25px rgba(6, 182, 212, 0.6)' 
-                            : isSelected 
-                              ? '0 0 20px rgba(255, 255, 255, 0.4)' 
-                              : '0 8px 24px rgba(0,0,0,0.4)',
-                          transition: 'all 0.3s ease'
+                          outline: isSelected ? '3px solid #ffffff' : 'none',
+                          outlineOffset: '4px'
                         }}
                       >
-                        {isCompleted ? (
-                          <CheckCircle2 size={32} color="#fff" />
-                        ) : isCurrent ? (
-                          <Play size={28} color="#fff" style={{ marginLeft: 3 }} />
-                        ) : (
-                          <BrainCircuit size={28} color="var(--text-muted)" />
-                        )}
+                        {renderNodeIcon()}
                       </div>
 
-                      {/* Phase Label Badge */}
+                      {/* Label Badge */}
                       <div style={{
                         textAlign: 'center',
                         background: isSelected ? 'rgba(99,102,241,0.35)' : 'rgba(15, 23, 42, 0.95)',
